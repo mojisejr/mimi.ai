@@ -17,6 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta
+        name="viewport"
+        content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1"
+      />
       <LineProvider>
         <body
           className={`${prompt.className} antialiased bg-gradient-to-br from-base-300 via-base-100 to-base-300`}
