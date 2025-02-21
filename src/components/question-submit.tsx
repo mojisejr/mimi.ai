@@ -16,7 +16,7 @@ export default function QuestionSubmit() {
             onChange={(e) => {
               setCount(e.target.value.length);
             }}
-            className="shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-xl w-full textarea  focus:outline-none resize-none leading-tight"
+            className="shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-xl w-full textarea  focus:outline-none resize-none leading-tight touch-manipulation"
             maxLength={180}
           />
           <div className="label label-text-alt self-end">{count}/180</div>
