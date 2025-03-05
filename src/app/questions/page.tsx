@@ -1,6 +1,5 @@
 "use client";
 import HeroQuestion from "@/components/hero-question";
-import MiniNav from "@/components/mini-nav";
 import QuestionSubmit from "@/components/question-submit";
 import { useLine } from "@/providers/line";
 import { redirect } from "next/navigation";

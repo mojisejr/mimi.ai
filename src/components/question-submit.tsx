@@ -1,18 +1,30 @@
 "use client";
-import { useState, useRef } from "react";
+import { useActionState, useEffect, useState } from "react";
 import QuestionSubmitButton from "./question-submit-button";
 import VoiceInputButton from "./voice-input-button";
+import { IAnswerResponseMessage } from "@/interfaces/i-answer";
+import { askMimi } from "@/actions/ask-mimi";
+import { redirect } from "next/navigation";
+
+const initialState: IAnswerResponseMessage = {
+  success: false,
+  error: null,
+  message: null,
+};
 
 export default function QuestionSubmit() {
   const [count, setCount] = useState<number>(0);
-  const questionRef = useRef<HTMLTextAreaElement>(null);
+  const [state, formAction, pending] = useActionState(askMimi, initialState);
+
+  useEffect(() => {}, [state]);
 
   return (
     <div>
-      <div className="flex gap-2 justify-between">
+      <form className="flex gap-2 justify-between" action={formAction}>
         <div className="form-control leading-tight flex flex-col flex-grow">
           <textarea
-            ref={questionRef}
+            disabled={pending}
+            name="question"
             onChange={(e) => {
               setCount(e.target.value.length);
             }}
@@ -22,7 +34,7 @@ export default function QuestionSubmit() {
           <div className="label label-text-alt self-end">{count}/180</div>
         </div>
         <QuestionSubmitButton />
-      </div>
+      </form>
       <div className="flex justify-center mt-8">
         <VoiceInputButton />
       </div>
