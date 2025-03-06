@@ -56,7 +56,7 @@ export const LineProvider = ({ children }: Props) => {
   useEffect(() => {
     // to avoid `window is not defined` error
     setInitialized(false);
-    updateLoggedInState();
+    // updateLoggedInState();
     import("@line/liff")
       .then((liff) => liff.default)
       .then((liff) => {
@@ -85,6 +85,7 @@ export const LineProvider = ({ children }: Props) => {
   }, [isLoggedIn, isInitialized]);
 
   function updateLoggedInState() {
+    console.log("status update to: ", liffObject?.isLoggedIn());
     liffObject?.isLoggedIn() ? setLoggedIn(true) : setLoggedIn(false);
   }
 
