@@ -22,7 +22,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
   const [state, formAction, pending] = useActionState(askMimi, initialState);
   const { transcribe } = useAudioInput();
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { replace } = useRouter();
+  const { push } = useRouter();
 
   useEffect(() => {
     if (transcribe && transcribe?.length > 0) {
@@ -40,7 +40,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
   useEffect(() => {
     if (state.success && state.message != null) {
       inputRef.current!.value = "";
-      replace(`/answer?ans=${JSON.stringify(state.message)}`);
+      push(`/answer?ans=${JSON.stringify(state.message)}`);
     }
   }, [state]);
 
