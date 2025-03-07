@@ -4,10 +4,16 @@ import Cursor from "./cursor";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 
 interface TypingTextProps {
+  duration?: number;
+  repeatDelay?: number;
   texts: string[];
 }
 
-export default function TypingText({ texts }: TypingTextProps) {
+export default function TypingText({
+  texts,
+  duration = 4,
+  repeatDelay = 2,
+}: TypingTextProps) {
   const textIndex = useMotionValue(0);
   const baseText = useTransform(textIndex, (latest) => texts[latest] || "");
   const count = useMotionValue(0);
@@ -21,11 +27,11 @@ export default function TypingText({ texts }: TypingTextProps) {
   useEffect(() => {
     animate(count, 60, {
       type: "tween",
-      duration: 4,
+      duration: duration,
       ease: "easeIn",
       repeat: Infinity,
       repeatType: "reverse",
-      repeatDelay: 2,
+      repeatDelay: repeatDelay,
       onUpdate(latest) {
         if (updatedThisRound.get() === true && latest > 0) {
           updatedThisRound.set(false);
