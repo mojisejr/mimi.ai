@@ -58,6 +58,7 @@ export const LineProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (!isLoggedIn) {
+      console.log("Log out triggered try to login");
       if (!liffObject) return;
       liffObject?.login();
     }
@@ -70,15 +71,19 @@ export const LineProvider = ({ children }: Props) => {
     }
 
     try {
+      console.log("Initializing LIFF");
       await liff.init({ liffId });
       setLiffObject(liff);
 
       if (liff.isLoggedIn()) {
+        console.log("User has logged In");
         setLoggedIn(true);
         const profile = await liff.getProfile();
+        console.log("uesr name: ", profile.displayName);
         setProfile(profile);
         // await getProfile();
       } else if (!liff.isLoggedIn()) {
+        console.log("No Logged In set isLoggedIn to false");
         setLoggedIn(false);
       }
     } catch (error: any) {

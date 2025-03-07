@@ -14,7 +14,7 @@ export default function Home() {
     return <LoadingScreen />;
   }
 
-  if (isInitialized && isLoggedIn) {
+  if (isLoggedIn) {
     return redirect("/questions");
   }
 
