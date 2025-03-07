@@ -25,7 +25,7 @@ export async function askMimi(
 
   if (answers.length <= 0) {
     return {
-      success: true,
+      success: false,
       error: "แม่หมออาจจะเบลอๆ ลองใหม่นะคะ.. 😢",
       message: null,
     };
@@ -42,5 +42,13 @@ export async function askMimi(
     value: JSON.stringify(answers[0]),
     path: "/",
   });
-  redirect("/answer");
+
+  revalidatePath("/questions");
+  return {
+    success: true,
+    error: null,
+    message: answers[0],
+  };
+
+  // redirect("/answer");
 }
