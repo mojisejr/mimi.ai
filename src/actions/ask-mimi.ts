@@ -31,24 +31,10 @@ export async function askMimi(
     };
   }
 
-  //   return {
-  //     success: true,
-  //     error: null,
-  //     message: answers![0] as IAnswer,
-  //   };
-
-  cookieStore.set({
-    name: "answer",
-    value: JSON.stringify(answers[0]),
-    path: "/",
-  });
-
   revalidatePath("/questions");
   return {
     success: true,
     error: null,
     message: answers[0],
   };
-
-  // redirect("/answer");
 }
