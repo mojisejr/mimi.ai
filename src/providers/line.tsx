@@ -72,7 +72,9 @@ export const LineProvider = ({ children }: Props) => {
 
       if (liff.isLoggedIn()) {
         setLoggedIn(true);
-        await getProfile();
+        const profile = await liff.getProfile();
+        setProfile(profile);
+        // await getProfile();
       }
     } catch (error: any) {
       console.log("LIFF init failed.");
