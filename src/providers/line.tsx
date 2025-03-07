@@ -56,6 +56,12 @@ export const LineProvider = ({ children }: Props) => {
     initLiff();
   }, []);
 
+  useEffect(() => {
+    if (!isLoggedIn) {
+      liff.login();
+    }
+  }, [isLoggedIn]);
+
   async function initLiff() {
     const liffId = process.env.NEXT_PUBLIC_LIFF_ID!;
     if (!liffId) {
@@ -71,6 +77,8 @@ export const LineProvider = ({ children }: Props) => {
         const profile = await liff.getProfile();
         setProfile(profile);
         // await getProfile();
+      } else if (!liff.isLoggedIn()) {
+        setLoggedIn(false);
       }
     } catch (error: any) {
       console.log("LIFF init failed.");

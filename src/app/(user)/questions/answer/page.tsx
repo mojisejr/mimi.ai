@@ -2,8 +2,10 @@
 import Link from "next/link";
 import { IAnswer } from "@/interfaces/i-answer";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function AnswerPage() {
+  const { back } = useRouter();
   const params = useSearchParams();
 
   const answer = params.get("ans");
@@ -56,9 +58,9 @@ export default function AnswerPage() {
         )}
       </section>
       <section className="h-1/6 flex w-full justify-center items-center">
-        <Link href="/questions" className="btn">
+        <button onClick={back} className="btn">
           กลับหน้าคำถาม
-        </Link>
+        </button>
       </section>
     </>
   );

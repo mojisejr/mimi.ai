@@ -8,7 +8,7 @@ import { i } from "framer-motion/client";
 export default function QuestionPage() {
   const [asking, setAsking] = useState<{ status: boolean; question: string }>({
     status: false,
-    question: "kkkkkk",
+    question: "",
   });
 
   const handleAskingState = (status: boolean, question: string) => {
