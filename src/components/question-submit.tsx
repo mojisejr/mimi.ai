@@ -1,10 +1,9 @@
 "use client";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import QuestionSubmitButton from "./question-submit-button";
 import VoiceInputButton from "./voice-input-button";
 import { IAnswerResponseMessage } from "@/interfaces/i-answer";
 import { askMimi } from "@/actions/ask-mimi";
-import { redirect } from "next/navigation";
 
 const initialState: IAnswerResponseMessage = {
   success: false,
@@ -15,8 +14,6 @@ const initialState: IAnswerResponseMessage = {
 export default function QuestionSubmit() {
   const [count, setCount] = useState<number>(0);
   const [state, formAction, pending] = useActionState(askMimi, initialState);
-
-  useEffect(() => {}, [state]);
 
   return (
     <div>
