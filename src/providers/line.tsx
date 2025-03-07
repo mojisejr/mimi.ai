@@ -56,6 +56,10 @@ export const LineProvider = ({ children }: Props) => {
     initLiff();
   }, []);
 
+  useEffect(() => {
+    getProfile();
+  }, [profile]);
+
   async function initLiff() {
     const liffId = process.env.NEXT_PUBLIC_LIFF_ID!;
     if (!liffId) {
@@ -94,8 +98,10 @@ export const LineProvider = ({ children }: Props) => {
   };
 
   const getProfile = async () => {
+    if (!isLoggedIn) return;
     try {
       const profile = await liffObject?.getProfile();
+      console.log("profile: ", profile);
       setProfile(profile ?? null);
     } catch (error) {
       setProfile(null);
