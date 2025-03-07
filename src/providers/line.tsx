@@ -58,7 +58,8 @@ export const LineProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      liff.login();
+      if (!liffObject) return;
+      liffObject?.login();
     }
   }, [isLoggedIn]);
 
