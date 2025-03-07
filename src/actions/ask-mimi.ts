@@ -42,6 +42,5 @@ export async function askMimi(
     value: JSON.stringify(answers[0]),
     path: "/",
   });
-  revalidatePath("/questions");
   redirect("/answer");
 }

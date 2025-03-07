@@ -7,7 +7,8 @@ import {
   useState,
 } from "react";
 import type { Liff } from "@line/liff";
-import { redirect } from "next/navigation";
+
+import liff from "@line/liff";
 
 export interface Profile {
   userId: string;
@@ -28,7 +29,6 @@ export type lineContextType = {
   logout: () => void;
   profile: Profile | null;
   isLoggedIn: boolean;
-  isLoading: boolean;
 };
 
 const initialState: lineContextType = {
@@ -39,7 +39,6 @@ const initialState: lineContextType = {
   logout: () => {},
   profile: null,
   isLoggedIn: false,
-  isLoading: false,
 };
 
 const LineContext = createContext(initialState);
@@ -48,48 +47,40 @@ export const LineProvider = ({ children }: Props) => {
   const [liffObject, setLiffObject] = useState<Liff | null>(null);
   const [liffError, setLiffError] = useState<string | null>(null);
   const [isInitialized, setInitialized] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
 
   // Execute liff.init() when the app is initialized
   useEffect(() => {
-    // to avoid `window is not defined` error
     setInitialized(false);
-    // updateLoggedInState();
-    import("@line/liff")
-      .then((liff) => liff.default)
-      .then((liff) => {
-        console.log("LIFF init...");
-        liff
-          .init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID! })
-          .then(() => {
-            console.log("LIFF init succeeded.");
-            liff.isLoggedIn() ? setLoggedIn(true) : setLoggedIn(false);
-            setInitialized(true);
-            setLiffObject(liff);
-          })
-          .catch((error: Error) => {
-            console.log("LIFF init failed.");
-            setInitialized(true);
-            setLiffError(error.toString());
-          })
-          .finally(() => setInitialized(true));
-      });
+    initLiff();
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn && isInitialized) {
-      void getProfile();
+  async function initLiff() {
+    const liffId = process.env.NEXT_PUBLIC_LIFF_ID!;
+    if (!liffId) {
+      throw Error("LIFF ID Required!");
     }
-  }, [isLoggedIn, isInitialized]);
 
-  function updateLoggedInState() {
-    console.log("status update to: ", liffObject?.isLoggedIn());
-    liffObject?.isLoggedIn() ? setLoggedIn(true) : setLoggedIn(false);
+    try {
+      await liff.init({ liffId });
+      setLiffObject(liff);
+
+      if (liff.isLoggedIn()) {
+        setLoggedIn(true);
+        await getProfile();
+      }
+    } catch (error: any) {
+      console.log("LIFF init failed.");
+      setInitialized(true);
+      setLiffError(error.toString());
+    } finally {
+      setInitialized(true);
+    }
   }
 
   const login = () => {
+    if (!liffObject) return;
     if (!liffObject?.isLoggedIn()) {
       liffObject?.login();
     }
@@ -117,7 +108,6 @@ export const LineProvider = ({ children }: Props) => {
         liff: liffObject,
         error: liffError,
         isInitialized,
-        isLoading,
         login,
         logout,
         profile,
