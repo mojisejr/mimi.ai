@@ -40,7 +40,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
   useEffect(() => {
     if (state.success && state.message != null) {
       inputRef.current!.value = "";
-      push(`/answer?ans=${JSON.stringify(state.message)}`);
+      push(`/questions/answer?ans=${JSON.stringify(state.message)}`);
     }
   }, [state]);
 
