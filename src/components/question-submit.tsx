@@ -42,6 +42,13 @@ export default function QuestionSubmit({ setAsking }: Props) {
       inputRef.current!.value = "";
       push(`/questions/answer?ans=${JSON.stringify(state.message)}`);
     }
+    if (!state.success && state.message == null && state.error != null) {
+      alert(
+        "เอ๊ะ คุณอาจจะถามแม่หมอในคำถามที่ไม่เกี่ยวกับการดู ดวงหรือเปล่านะ ลองถามใหม่นะค๊ะ ✨"
+      );
+      inputRef.current!.value = "";
+      return;
+    }
   }, [state]);
 
   const handleSubmit = (formData: FormData) => {
