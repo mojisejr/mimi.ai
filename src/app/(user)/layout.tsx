@@ -2,19 +2,22 @@
 import MiniNav from "@/components/mini-nav";
 import { AudioInputProvider } from "@/providers/audio-input";
 import { useLine } from "@/providers/line";
-import { redirect } from "next/navigation";
-import React, { ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import React, { ReactNode, useEffect } from "react";
 
 type Props = {
   children: ReactNode;
 };
 
 export default function Layout({ children }: Props) {
+  const { replace } = useRouter();
   const { isLoggedIn } = useLine();
 
-  if (!isLoggedIn) {
-    return redirect("/");
-  }
+  useEffect(() => {
+    if (!isLoggedIn) {
+      replace("/");
+    }
+  }, [isLoggedIn]);
 
   return (
     <div className="flex h-screen justify-center flex-col items-center">

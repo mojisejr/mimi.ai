@@ -3,7 +3,6 @@ import HeroQuestion from "@/components/hero-question";
 import TypingText from "@/components/typing-text/text";
 import QuestionSubmit from "@/components/question-submit";
 import React, { useState } from "react";
-import { i } from "framer-motion/client";
 
 export default function QuestionPage() {
   const [asking, setAsking] = useState<{ status: boolean; question: string }>({

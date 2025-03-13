@@ -10,7 +10,6 @@ export async function askMimi(
   data: FormData
 ): Promise<IAnswerResponseMessage> {
   const question = data.get("question");
-  const cookieStore = await cookies();
   let answers;
 
   const response = await axios.post(
