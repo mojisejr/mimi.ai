@@ -34,6 +34,8 @@ export default function QuestionSubmit({ setAsking }: Props) {
   useEffect(() => {
     if (pending) {
       setAsking(true, inputRef.current!.value);
+    } else {
+      setAsking(false, "");
     }
   }, [pending]);
 
@@ -43,10 +45,9 @@ export default function QuestionSubmit({ setAsking }: Props) {
       push(`/questions/answer?ans=${JSON.stringify(state.message)}`);
     }
     if (!state.success && state.message == null && state.error != null) {
-      alert(
-        "เอ๊ะ คุณอาจจะถามแม่หมอในคำถามที่ไม่เกี่ยวกับการดู ดวงหรือเปล่านะ ลองถามใหม่นะค๊ะ ✨"
-      );
+      alert(state.error);
       inputRef.current!.value = "";
+      setAsking(false, "");
       return;
     }
   }, [state]);
