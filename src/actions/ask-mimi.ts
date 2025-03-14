@@ -16,6 +16,8 @@ export async function askMimi(
 
   answers = response.data as IAnswer[];
 
+  console.log(answers);
+
   if (answers.length <= 0) {
     return {
       success: false,
