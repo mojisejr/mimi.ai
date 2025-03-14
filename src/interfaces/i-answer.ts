@@ -6,10 +6,15 @@ export interface IAnswerResponseMessage {
 
 export interface IAnswer {
   header: string;
-  cards: string[];
+  cards: Card[];
   reading: string;
   suggest: string;
   final: string;
   end: string;
   notice: string;
+}
+
+export interface Card {
+  name: string;
+  imageUrl: string;
 }
