@@ -24,7 +24,7 @@ export default function QuestionPage() {
               <div>{asking.question} ?</div>
             </div>
             <TypingText
-              texts={["ทำใจให้สบาย..นะคะ", "กำลังทำนาย..ค่ะ"]}
+              texts={["ทำใจให้สบาย..นะคะ", "กำลังทำนาย..."]}
               duration={1.5}
               repeatDelay={1.3}
             />
