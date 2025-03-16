@@ -6,6 +6,7 @@ import { IAnswerResponseMessage } from "@/interfaces/i-answer";
 import { askMimi } from "@/actions/ask-mimi";
 import { useAudioInput } from "@/providers/audio-input";
 import { useRouter } from "next/navigation";
+import { useLine } from "@/providers/line";
 
 const initialState: IAnswerResponseMessage = {
   success: false,
@@ -23,7 +24,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
   const { transcribe } = useAudioInput();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { push } = useRouter();
-
+  const { profile } = useLine();
   useEffect(() => {
     if (transcribe && transcribe?.length > 0) {
       inputRef.current!.value = transcribe;
@@ -59,6 +60,8 @@ export default function QuestionSubmit({ setAsking }: Props) {
   return (
     <div>
       <form className="flex gap-2 justify-between" action={handleSubmit}>
+        <input type="hidden" name="userId" value={profile?.userId} />
+        <input type="hidden" name="user" value={profile?.displayName} />
         <div className="form-control leading-tight flex flex-col flex-grow placeholder:text-black">
           <textarea
             disabled={pending}
