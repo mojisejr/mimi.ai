@@ -24,7 +24,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
   const { transcribe } = useAudioInput();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { push } = useRouter();
-  const { profile } = useLine();
+  const { profile, getProfile } = useLine();
 
   useEffect(() => {
     if (transcribe && transcribe?.length > 0) {
@@ -54,15 +54,32 @@ export default function QuestionSubmit({ setAsking }: Props) {
     }
   }, [state]);
 
+  useEffect(() => {
+    getProfile();
+  }, []);
+
   const handleSubmit = (formData: FormData) => {
     formAction(formData);
   };
 
   return (
     <div>
+      <span className="text-sm">
+        คุณเหลืออีก{" "}
+        <span className="badge badge-primary badge-sm">
+          {profile?.currentPoint}
+        </span>{" "}
+        คำถาม
+      </span>
       <form className="flex gap-2 justify-between" action={handleSubmit}>
         <input type="hidden" name="userId" value={profile?.userId} />
         <input type="hidden" name="user" value={profile?.displayName} />
+        <input
+          type="hidden"
+          name="currentPoint"
+          value={profile?.currentPoint}
+        />
+
         <div className="form-control leading-tight flex flex-col flex-grow placeholder:text-black">
           <textarea
             disabled={pending}
@@ -76,10 +93,15 @@ export default function QuestionSubmit({ setAsking }: Props) {
           />
           <div className="label label-text-alt self-end">{count}/180</div>
         </div>
-        <QuestionSubmitButton />
+        <QuestionSubmitButton
+          count={count}
+          currentPoint={profile?.currentPoint as number}
+        />
       </form>
       <div className="flex justify-center mt-8">
-        <VoiceInputButton disabled={pending} />
+        <VoiceInputButton
+          disabled={pending || (profile?.currentPoint as number) <= 0}
+        />
       </div>
     </div>
   );

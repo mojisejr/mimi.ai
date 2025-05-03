@@ -12,6 +12,8 @@
     "@libsql/client": "^0.15.1",
     "@line/liff": "2.25.1",
     "axios": "^1.8.1",
+    "dayjs": "^1.11.13",
+    "dompurify": "^3.2.5",
     "framer-motion": "^12.4.5",
     "next": "15.1.7",
     "next-session": "^4.0.5",

@@ -1,4 +1,4 @@
-export {};
+import Omise from "./omise/omise";
 
 declare global {
   interface Window {

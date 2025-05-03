@@ -2,7 +2,7 @@ import { useLine } from "@/providers/line";
 import Link from "next/link";
 
 export default function MiniNavMenu() {
-  const { logout } = useLine();
+  const { logout, profile } = useLine();
 
   return (
     <div className="dropdown dropdown-end">
@@ -18,6 +18,11 @@ export default function MiniNavMenu() {
         </li>
         <li>
           <Link href="/payment">เติมเครดิด</Link>
+        </li>
+        <li>
+          <Link href={`/payment/history?id=${profile?.userId}`}>
+            ประวัติการชำระเงิน
+          </Link>
         </li>
         <li>
           <a>คู่มือการใช้งาน</a>

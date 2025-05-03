@@ -1,9 +1,14 @@
 "use client";
+import { usePromptPay } from "@/hooks/promptpay";
+import { PackageInfo } from "@/interfaces/i-package";
+import { Profile } from "@/providers/line";
+import { loadScript } from "@/utils/script-loader";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 
 interface RefillCardProps {
+  id: number;
   packageTitle?: string;
   creditAmount?: string | number;
   creditAmountNumber: number;
@@ -12,9 +17,11 @@ interface RefillCardProps {
   currency?: string;
   subtitle?: string;
   ctaText?: string;
+  setSelectedPack: (pack: PackageInfo) => void;
 }
 
 export default function CreditCard({
+  id,
   packageTitle,
   creditAmount,
   creditAmountNumber,
@@ -23,24 +30,8 @@ export default function CreditCard({
   currency,
   subtitle,
   ctaText,
+  setSelectedPack,
 }: RefillCardProps) {
-  const [ready, setReady] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!ready && window !== undefined) {
-      console.log(ready);
-      setReady(true);
-    }
-  }, [ready]);
-
-  const handlePaymentModal = () => {
-    if (window !== undefined) {
-      window.payment_dialog.showModal();
-    } else {
-      alert("ไม่พร้อม");
-    }
-  };
-
   return (
     <motion.div
       className="relative w-full max-w-[280px] mx-auto"
@@ -107,11 +98,34 @@ export default function CreditCard({
 
             {/* CTA Button */}
             <button
-              className="w-full py-2 bg-amber-900 text-amber-100 rounded-md hover:bg-amber-800 transition-colors font-medium"
-              onClick={() => handlePaymentModal()}
+              onClick={() =>
+                setSelectedPack({
+                  id,
+                  packageTitle,
+                  creditAmount,
+                  creditAmountNumber,
+                  priceNumber,
+                  price,
+                  currency,
+                  subtitle,
+                  ctaText,
+                })
+              }
+              className="w-full py-2 bg-amber-900 text-amber-100 rounded-md hover:bg-amber-800 transition-colors font-medium swap-off"
             >
               {ctaText}
             </button>
+            {/* <div className="w-full swap-on flex flex-col gap-2">
+                <button className="btn btn-sm text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800">
+                  Promptpay
+                </button>
+                <button className="btn btn-sm text-white bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:via-red-700 hover:to-red-800">
+                  True Money QR
+                </button>
+                <button className="btn btn-sm text-white bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800">
+                  Mobile Banking
+                </button>
+              </div> */}
           </div>
         </div>
       </div>

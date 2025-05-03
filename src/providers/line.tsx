@@ -10,12 +10,14 @@ import type { Liff } from "@line/liff";
 
 import liff from "@line/liff";
 import { addNewUserIfNotExist } from "@/actions/add-user-info";
+import { getUser } from "@/actions/get-user-info";
 
 export interface Profile {
   userId: string;
   displayName: string;
   pictureUrl?: string;
   statusMessage?: string;
+  currentPoint: number;
 }
 
 type Props = {
@@ -30,6 +32,7 @@ export type lineContextType = {
   logout: () => void;
   profile: Profile | null;
   isLoggedIn: boolean;
+  getProfile: () => void;
 };
 
 const initialState: lineContextType = {
@@ -40,6 +43,7 @@ const initialState: lineContextType = {
   logout: () => {},
   profile: null,
   isLoggedIn: false,
+  getProfile: () => {},
 };
 
 const LineContext = createContext(initialState);
@@ -63,10 +67,14 @@ export const LineProvider = ({ children }: Props) => {
       if (!liffObject) return;
       liffObject?.login();
     }
+    console.log("LOGGED IN");
   }, [isLoggedIn]);
 
   async function initLiff() {
-    const liffId = process.env.NEXT_PUBLIC_LIFF_ID!;
+    const liffId =
+      process.env.NODE_ENV == "development"
+        ? process.env.NEXT_PUBLIC_LIFF_DEV_ID!
+        : process.env.NEXT_PUBLIC_LIFF_ID!;
     if (!liffId) {
       throw Error("LIFF ID Required!");
     }
@@ -80,14 +88,18 @@ export const LineProvider = ({ children }: Props) => {
         console.log("User has logged In");
         setLoggedIn(true);
         const profile = await liff.getProfile();
-        console.log("uesr name: ", profile.displayName);
 
         await addNewUserIfNotExist({
           lineId: profile.userId,
           name: profile.displayName,
         });
 
-        setProfile(profile);
+        const userData = await getUser(profile.userId);
+
+        setProfile({
+          ...profile,
+          currentPoint: (userData?.point as number) || 0,
+        });
         // await getProfile();
       } else if (!liff.isLoggedIn()) {
         console.log("No Logged In set isLoggedIn to false");
@@ -116,22 +128,33 @@ export const LineProvider = ({ children }: Props) => {
     }
   };
 
-  // const getProfile = async () => {
-  //   if (!isLoggedIn) return;
-  //   try {
-  //     const profile = await liffObject?.getProfile();
-  //     console.log("profile: ", profile);
-  //     setProfile(profile ?? null);
-  //   } catch (error) {
-  //     setProfile(null);
-  //   }
-  // };
+  const getProfile = async () => {
+    if (!isLoggedIn) return;
+    try {
+      const profile = await liffObject?.getProfile();
+      if (!profile?.userId) {
+        setProfile(null);
+        return;
+      }
+      const userData = await getUser(profile.userId);
+      setProfile({
+        userId: profile.userId,
+        displayName: profile.displayName,
+        pictureUrl: profile.pictureUrl,
+        statusMessage: profile.statusMessage,
+        currentPoint: (userData?.point as number) || 0,
+      });
+    } catch (error) {
+      setProfile(null);
+    }
+  };
 
   return (
     <LineContext.Provider
       value={{
         liff: liffObject,
         error: liffError,
+        getProfile,
         isInitialized,
         login,
         logout,
