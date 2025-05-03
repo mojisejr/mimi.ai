@@ -69,12 +69,10 @@ function AnswerSection() {
   }
 
   const parsedAnswer: IAnswer | null = answer ? JSON.parse(answer) : null;
-  // const parsedAnswer: IAnswer | null = mocked ? mocked : null;
   const [flipped, setFlipped] = useState(
     Array(parsedAnswer?.cards.length).fill(false)
   );
 
-  console.log(flipped);
   const [reveal, setReveal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -161,15 +159,26 @@ function AnswerSection() {
                 {parsedAnswer?.reading}
               </motion.p>
               <motion.h1 className="text-xl font-bold" variants={textVariants}>
-                🤟 แนะนำ
-              </motion.h1>
-              <motion.p variants={textVariants}>
-                {parsedAnswer?.suggest}
-              </motion.p>
-              <motion.h1 className="text-xl font-bold" variants={textVariants}>
                 💚 สรุป
               </motion.h1>
-              <motion.p variants={textVariants}>{parsedAnswer?.final}</motion.p>
+              <motion.ul variants={textVariants}>
+                {parsedAnswer?.final.map((f, index) => (
+                  <li key={index}>
+                    {index + 1}. {f}
+                  </li>
+                ))}
+              </motion.ul>
+
+              <motion.h1 className="text-xl font-bold" variants={textVariants}>
+                🤟 แนะนำคำถาม
+              </motion.h1>
+              <motion.ul variants={textVariants}>
+                {parsedAnswer?.suggest.map((s, index) => (
+                  <li key={index}>
+                    {index + 1}. {s}
+                  </li>
+                ))}
+              </motion.ul>
 
               <motion.div variants={textVariants}>
                 {parsedAnswer.end} 🙏🙏

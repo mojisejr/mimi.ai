@@ -1,8 +1,8 @@
 "use server";
 import { IAnswer, IAnswerResponseMessage } from "@/interfaces/i-answer";
+import { subtractPointToUser } from "@/services/torso-db";
 import axios from "axios";
 import { revalidatePath } from "next/cache";
-import { useLine } from "@/providers/line";
 
 export async function askMimi(
   prevState: IAnswerResponseMessage,
@@ -11,7 +11,16 @@ export async function askMimi(
   const question = data.get("question");
   const userId = data.get("userId");
   const user = data.get("user");
+  const currentPoint = data.get("currentPoint");
   let answers;
+
+  if (parseInt(currentPoint as string) <= 0) {
+    return {
+      success: false,
+      error: "คุณไม่มีแต้มสำหรับการถามคำถามแล้ว, กรุณาเติม credit",
+      message: null,
+    };
+  }
 
   const response = await axios.post(process.env.N8N_URL!, {
     userId: userId,
@@ -39,7 +48,20 @@ export async function askMimi(
     };
   }
 
-  revalidatePath("/questions");
+  const result = await subtractPointToUser(
+    userId as string,
+    parseInt(currentPoint as string),
+    1
+  );
+
+  if (!result) {
+    return {
+      success: false,
+      error: "คุณไม่มีแต้มสำหรับการถามคำถามแล้ว",
+      message: null,
+    };
+  }
+
   return {
     success: true,
     error: null,

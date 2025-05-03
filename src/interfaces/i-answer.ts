@@ -8,8 +8,8 @@ export interface IAnswer {
   header: string;
   cards: Card[];
   reading: string;
-  suggest: string;
-  final: string;
+  suggest: string[];
+  final: string[];
   end: string;
   notice: string;
 }
