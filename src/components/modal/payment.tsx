@@ -1,10 +1,8 @@
 "use client";
 import { usePromptPay } from "@/hooks/promptpay";
 import { PackageInfo } from "@/interfaces/i-package";
-import { PaymentData } from "@/interfaces/i-payment-data";
 import { useLine } from "@/providers/line";
 import { loadScript } from "@/utils/script-loader";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 
 type Props = {

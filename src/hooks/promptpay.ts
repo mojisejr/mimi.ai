@@ -55,7 +55,11 @@ export const usePromptPay = () => {
     );
   };
 
-  const path = "http://localhost:3000/api/omise/promptpay";
+  const path =
+    process.env.NODE_ENV == "production"
+      ? "https://mimi-ai.vercel.app/api/omise/promptpay"
+      : "http://localhost:3000/api/omise/promptpay";
+
   const promptPayCharge = async ({
     sourceId,
     buyerId,
