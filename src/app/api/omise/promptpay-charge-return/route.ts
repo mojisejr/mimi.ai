@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         chargeId: retrievedCharge?.id,
       });
 
-      console.log("history saved");
+      console.log("history saved: ", history);
 
       if (!history) {
         return NextResponse.json({
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      console.log("point save");
+      console.log("point save", point);
 
       return NextResponse.json({
         id: retrievedCharge?.id,
