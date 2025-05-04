@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
         retrievedCharge.description
       ) as ChargeDescription;
 
-      const history = addPaymentHistory({
+      const history = await addPaymentHistory({
         lineId: description.userId,
         packId: packId as string,
         status: retrievedCharge.status,
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      const point = addPointToUser(
+      const point = await addPointToUser(
         description.userId,
         parseInt(description.credit_amount)
       );
