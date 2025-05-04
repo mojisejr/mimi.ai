@@ -74,15 +74,17 @@ export const addPaymentHistory = async (payment: PaymentHistory) => {
       args: [payment.lineId, payment.packId, payment.status, payment.chargeId],
     });
 
-    return result;
+    console.log("addPaymentHistory: ", result);
+
+    return result.rows.length > 0 ? true : false;
   } catch (error) {
     console.log(error);
-    return null;
+    return false;
   }
 };
 
 export const addPointToUser = async (userId: string, pointToAdd: number) => {
-  if (pointToAdd <= 0) return;
+  if (pointToAdd <= 0) return false;
   try {
     const result = await torso.batch([
       {
@@ -95,10 +97,12 @@ export const addPointToUser = async (userId: string, pointToAdd: number) => {
       },
     ]);
 
-    return result;
+    console.log("addPointToUser: ", result);
+
+    return result.length > 0 ? true : false;
   } catch (error) {
     console.log(error);
-    return null;
+    return false;
   }
 };
 
