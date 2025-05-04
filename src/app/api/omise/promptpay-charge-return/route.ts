@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
         chargeId: retrievedCharge?.id,
       });
 
+      console.log("history saved");
+
       if (!history) {
         return NextResponse.json({
           id: retrievedCharge?.id,
@@ -55,6 +57,8 @@ export async function GET(req: NextRequest) {
         });
       }
 
+      console.log("point save");
+
       return NextResponse.json({
         id: retrievedCharge?.id,
         status: retrievedCharge?.status,
@@ -65,12 +69,14 @@ export async function GET(req: NextRequest) {
         status: retrievedCharge.status,
       });
     } else {
+      console.log("other status");
       return NextResponse.json({
         id: retrievedCharge.source?.id,
         status: retrievedCharge.status,
       });
     }
   } catch (error) {
+    console.log("ERROR somethig went wrong");
     console.log(error);
     return NextResponse.json({ id: null, status: "idle" });
   }
