@@ -76,7 +76,7 @@ export const addPaymentHistory = async (payment: PaymentHistory) => {
 
     console.log("addPaymentHistory: ", result);
 
-    return result.rows.length > 0 ? true : false;
+    return result.rowsAffected > 0 ? true : false;
   } catch (error) {
     console.log(error);
     return false;
