@@ -28,21 +28,48 @@ export async function GET(req: NextRequest) {
       const description = JSON.parse(
         retrievedCharge.description
       ) as ChargeDescription;
-      addPaymentHistory({
+
+      const history = addPaymentHistory({
         lineId: description.userId,
         packId: packId as string,
         status: retrievedCharge.status,
-        chargeId: retrievedCharge.source?.id!,
-      }).then((result) => {
-        if (!result) return NextResponse.json({ id: null, status: "failed" });
-        addPointToUser(description.userId, parseInt(description.credit_amount));
+        chargeId: retrievedCharge?.id,
+      });
+
+      if (!history) {
+        return NextResponse.json({
+          id: retrievedCharge?.id,
+          status: retrievedCharge?.status,
+        });
+      }
+
+      const point = addPointToUser(
+        description.userId,
+        parseInt(description.credit_amount)
+      );
+
+      if (!point) {
+        return NextResponse.json({
+          id: retrievedCharge?.id,
+          status: retrievedCharge?.status,
+        });
+      }
+
+      return NextResponse.json({
+        id: retrievedCharge?.id,
+        status: retrievedCharge?.status,
+      });
+    } else if (retrievedCharge.status == "pending") {
+      return NextResponse.json({
+        id: retrievedCharge.source?.id,
+        status: retrievedCharge.status,
+      });
+    } else {
+      return NextResponse.json({
+        id: retrievedCharge.source?.id,
+        status: retrievedCharge.status,
       });
     }
-
-    return NextResponse.json({
-      id: retrievedCharge.source?.id,
-      status: retrievedCharge.status,
-    });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ id: null, status: "idle" });
