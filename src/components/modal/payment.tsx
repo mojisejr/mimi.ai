@@ -15,7 +15,7 @@ export default function PaymentModal({ pack, onClose, isOpen }: Props) {
   const { profile, isLoggedIn } = useLine();
   const [omiseLoaded, setOmiseLoaded] = useState<boolean>(false);
   const [omise, setOmise] = useState<any>();
-  const { createSource, isLoading } = usePromptPay();
+  const { createSource, isLoading: promptpayLoading } = usePromptPay();
 
   useEffect(() => {
     setOmiseLoaded(false);
@@ -55,10 +55,18 @@ export default function PaymentModal({ pack, onClose, isOpen }: Props) {
             <h2 className="text-2xl font-bold my-2">เลือกช่องทางการชำระเงิน</h2>
             <div className="w-full gap-2 grid grid-cols-1">
               <button
+                disabled={promptpayLoading}
                 onClick={handleStartPromptpayFlow}
-                className="btn  text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800"
+                className="btn  text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 disabled:bg-slate-300"
               >
-                Promptpay
+                {promptpayLoading ? (
+                  <div className="flex gap-2 justify-center">
+                    <div className="loading-infinity loading-sm loading-primary"></div>
+                    <span>Loading..</span>
+                  </div>
+                ) : (
+                  "Promptpay"
+                )}
               </button>
               <button className="btn  text-white bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:via-red-700 hover:to-red-800">
                 True Money QR

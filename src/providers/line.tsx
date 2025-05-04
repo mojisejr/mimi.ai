@@ -33,6 +33,7 @@ export type lineContextType = {
   profile: Profile | null;
   isLoggedIn: boolean;
   getProfile: () => void;
+  profileLoading: boolean;
 };
 
 const initialState: lineContextType = {
@@ -44,6 +45,7 @@ const initialState: lineContextType = {
   profile: null,
   isLoggedIn: false,
   getProfile: () => {},
+  profileLoading: false,
 };
 
 const LineContext = createContext(initialState);
@@ -54,6 +56,7 @@ export const LineProvider = ({ children }: Props) => {
   const [isInitialized, setInitialized] = useState<boolean>(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
+  const [profileLoading, setProfileLoading] = useState<boolean>(false);
 
   // Execute liff.init() when the app is initialized
   useEffect(() => {
@@ -129,6 +132,7 @@ export const LineProvider = ({ children }: Props) => {
   };
 
   const getProfile = async () => {
+    setProfileLoading(true);
     if (!isLoggedIn) return;
     try {
       const profile = await liffObject?.getProfile();
@@ -144,8 +148,12 @@ export const LineProvider = ({ children }: Props) => {
         statusMessage: profile.statusMessage,
         currentPoint: (userData?.point as number) || 0,
       });
+      setProfileLoading(false);
     } catch (error) {
       setProfile(null);
+      setProfileLoading(false);
+    } finally {
+      setProfileLoading(false);
     }
   };
 
@@ -155,6 +163,7 @@ export const LineProvider = ({ children }: Props) => {
         liff: liffObject,
         error: liffError,
         getProfile,
+        profileLoading,
         isInitialized,
         login,
         logout,

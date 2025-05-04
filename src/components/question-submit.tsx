@@ -7,6 +7,7 @@ import { askMimi } from "@/actions/ask-mimi";
 import { useAudioInput } from "@/providers/audio-input";
 import { useRouter } from "next/navigation";
 import { useLine } from "@/providers/line";
+import PointCounter from "./point-counter";
 
 const initialState: IAnswerResponseMessage = {
   success: false,
@@ -21,10 +22,20 @@ type Props = {
 export default function QuestionSubmit({ setAsking }: Props) {
   const [count, setCount] = useState<number>(0);
   const [state, formAction, pending] = useActionState(askMimi, initialState);
+  const [isIOS, setIsIOS] = useState<boolean>(false);
   const { transcribe } = useAudioInput();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { push } = useRouter();
   const { profile, getProfile } = useLine();
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent.toLocaleLowerCase();
+    if (userAgent.includes("iphone") || userAgent.includes("ipad")) {
+      setIsIOS(true);
+    } else {
+      setIsIOS(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (transcribe && transcribe?.length > 0) {
@@ -64,13 +75,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
 
   return (
     <div>
-      <span className="text-sm">
-        คุณเหลืออีก{" "}
-        <span className="badge badge-primary badge-sm">
-          {profile?.currentPoint}
-        </span>{" "}
-        คำถาม
-      </span>
+      <PointCounter />
       <form className="flex gap-2 justify-between" action={handleSubmit}>
         <input type="hidden" name="userId" value={profile?.userId} />
         <input type="hidden" name="user" value={profile?.displayName} />
@@ -98,10 +103,20 @@ export default function QuestionSubmit({ setAsking }: Props) {
           currentPoint={profile?.currentPoint as number}
         />
       </form>
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-8 flex-col items-center">
         <VoiceInputButton
-          disabled={pending || (profile?.currentPoint as number) <= 0}
+          disabled={
+            pending ||
+            (profile?.currentPoint as number) <= 0 ||
+            count <= 0 ||
+            isIOS
+          }
         />
+        {isIOS ? (
+          <span className="text-xs text-slate-400">
+            ไม่สามารถใช้ไมค์บน LIFF APP กรุณาเปิดใน browser
+          </span>
+        ) : null}
       </div>
     </div>
   );
