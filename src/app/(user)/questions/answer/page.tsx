@@ -2,7 +2,7 @@
 import { IAnswer } from "@/interfaces/i-answer";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { animate, motion } from "framer-motion";
 import Logo from "@/components/logo";
 import AnswerCard from "@/components/answer-card";
@@ -74,15 +74,40 @@ function AnswerSection() {
   );
 
   const [reveal, setReveal] = useState<boolean>(false);
+  const autoRevealTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (flipped.every((value) => value === true)) {
       setReveal(true);
+      if (autoRevealTimeout.current) {
+        clearTimeout(autoRevealTimeout.current);
+      }
     }
+
+    // if (flipped.every((value) => value === true)) {
+    //   setReveal(true);
+    // }
   }, [flipped]);
+
+  useEffect(() => {
+    autoRevealTimeout.current = setTimeout(() => {
+      handleAutoReveal();
+    }, 3000);
+
+    return () => {
+      if (autoRevealTimeout.current) {
+        clearTimeout(autoRevealTimeout.current);
+      }
+    };
+  }, []);
 
   const handleFlip = (index: number) => {
     setFlipped((prev) => prev.map((f, i) => (i === index ? !f : f)));
+  };
+
+  const handleAutoReveal = async () => {
+    setFlipped((prev) => prev.map(() => true));
+    setReveal(true);
   };
 
   return (
