@@ -2,7 +2,6 @@
 import { IAnswer, IAnswerResponseMessage } from "@/interfaces/i-answer";
 import { subtractPointToUser } from "@/services/torso-db";
 import axios from "axios";
-import { revalidatePath } from "next/cache";
 
 export async function askMimi(
   prevState: IAnswerResponseMessage,
@@ -29,8 +28,6 @@ export async function askMimi(
   });
 
   answers = response.data as IAnswer;
-
-  // console.log(answers);
 
   if (!answers) {
     return {
