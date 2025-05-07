@@ -1,6 +1,6 @@
 "use server";
 import { IAnswer, IAnswerResponseMessage } from "@/interfaces/i-answer";
-import { subtractPointToUser } from "@/services/torso-db";
+import { saveReading, subtractPointToUser } from "@/services/torso-db";
 import axios from "axios";
 
 export async function askMimi(
@@ -17,6 +17,7 @@ export async function askMimi(
     return {
       success: false,
       error: "คุณไม่มีแต้มสำหรับการถามคำถามแล้ว, กรุณาเติม credit",
+      answerId: null,
       message: null,
     };
   }
@@ -32,6 +33,7 @@ export async function askMimi(
   if (!answers) {
     return {
       success: false,
+      answerId: null,
       error: "แม่หมออาจจะเบลอๆ ลองใหม่นะคะ.. 😢",
       message: null,
     };
@@ -41,6 +43,7 @@ export async function askMimi(
     return {
       success: false,
       error: answers.header,
+      answerId: null,
       message: null,
     };
   }
@@ -55,6 +58,27 @@ export async function askMimi(
     return {
       success: false,
       error: "คุณไม่มีแต้มสำหรับการถามคำถามแล้ว",
+      answerId: null,
+      message: null,
+    };
+  }
+
+  //save
+  const saveResult = await saveReading({
+    line_id: userId as string,
+    question: question as string,
+    answer: {
+      ...answers,
+    },
+  });
+
+  console.log("save result: ", saveResult);
+
+  if (!saveResult.success) {
+    return {
+      success: false,
+      error: "ไม่สามารถเซฟคำตอบได้ตามปกติ",
+      answerId: null,
       message: null,
     };
   }
@@ -62,6 +86,7 @@ export async function askMimi(
   return {
     success: true,
     error: null,
+    answerId: saveResult.answerId,
     message: answers,
   };
 }

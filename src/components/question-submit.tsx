@@ -12,6 +12,7 @@ import PointCounter from "./point-counter";
 const initialState: IAnswerResponseMessage = {
   success: false,
   error: null,
+  answerId: null,
   message: null,
 };
 
@@ -55,7 +56,8 @@ export default function QuestionSubmit({ setAsking }: Props) {
   useEffect(() => {
     if (state.success && state.message != null) {
       inputRef.current!.value = "";
-      push(`/questions/answer?ans=${JSON.stringify(state.message)}`);
+      localStorage.setItem("answerData", JSON.stringify(state.message));
+      push(`/questions/answer?aid=${state.answerId}`);
     }
     if (!state.success && state.message == null && state.error != null) {
       alert(state.error);
