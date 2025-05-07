@@ -17,6 +17,9 @@ export default function MiniNavMenu() {
           <Link href="/questions">ดูดวง</Link>
         </li>
         <li>
+          <Link href={`/history?uid=${profile?.userId}`}>ประวัติคำทำนาย</Link>
+        </li>
+        <li>
           <Link href="/payment">เติมเครดิด</Link>
         </li>
         <li>
@@ -24,6 +27,7 @@ export default function MiniNavMenu() {
             ประวัติการชำระเงิน
           </Link>
         </li>
+
         <li>
           <a>คู่มือการใช้งาน</a>
         </li>

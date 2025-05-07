@@ -1,5 +1,6 @@
 export interface IAnswerResponseMessage {
   success: boolean;
+  answerId: number | null;
   error: string | null;
   message: IAnswer | null;
 }
