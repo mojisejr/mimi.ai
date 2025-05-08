@@ -3,18 +3,11 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const mockedImage = [
-  "/images/cards/ace_of_cups.png",
-  "/images/cards/ace_of_pentacles.png",
-  "/images/cards/ace_of_wands.png",
-];
-
 type Props = {
   cards: { name: string; imageUrl: string }[];
 };
 
 export default function StackedCards({ cards }: Props) {
-  console.log(cards);
   if (cards.length <= 0) {
     return <div className="text-sm">ไม่พบรูปภาพ</div>;
   }
@@ -26,7 +19,7 @@ export default function StackedCards({ cards }: Props) {
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{
-            duration: 0.5,
+            duration: 0.8,
             delay: index * 0.1,
             ease: "easeOut",
           }}

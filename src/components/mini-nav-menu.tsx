@@ -1,3 +1,4 @@
+"use client";
 import { useLine } from "@/providers/line";
 import Link from "next/link";
 
@@ -17,7 +18,7 @@ export default function MiniNavMenu() {
           <Link href="/questions">ดูดวง</Link>
         </li>
         <li>
-          <Link href={`/history?uid=${profile?.userId}`}>ประวัติคำทำนาย</Link>
+          <Link href={`/history`}>ประวัติคำทำนาย</Link>
         </li>
         <li>
           <Link href="/payment">เติมเครดิด</Link>
@@ -27,7 +28,6 @@ export default function MiniNavMenu() {
             ประวัติการชำระเงิน
           </Link>
         </li>
-
         <li>
           <a>คู่มือการใช้งาน</a>
         </li>

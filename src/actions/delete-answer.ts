@@ -1,7 +1,12 @@
 "use server";
 import { deleteReading } from "@/services/torso-db";
+import { revalidatePath } from "next/cache";
 
-export async function deleteAnswerById(data: FormData) {
+export async function deleteAnswerById(data: FormData): Promise<{
+  success: boolean;
+  message: string | null;
+  error: string | null;
+}> {
   const answerId = data.get("answerId");
   if (answerId == null)
     return {
@@ -19,6 +24,7 @@ export async function deleteAnswerById(data: FormData) {
     };
   }
 
+  revalidatePath("/history");
   return {
     success: true,
     error: null,
