@@ -2,6 +2,7 @@
 import { IAnswer, IAnswerResponseMessage } from "@/interfaces/i-answer";
 import { saveReading, subtractPointToUser } from "@/services/torso-db";
 import axios from "axios";
+import { cleanInput } from "@/utils/clean-input";
 
 export async function askMimi(
   prevState: IAnswerResponseMessage,
@@ -22,10 +23,16 @@ export async function askMimi(
     };
   }
 
+  const cleanedQuestion = cleanInput(question as string);
+
+  if (!cleanedQuestion) {
+    throw new Error("กรุณาป้อนคำถาม");
+  }
+
   const response = await axios.post(process.env.N8N_URL!, {
     userId: userId,
     user: user,
-    output: question,
+    output: cleanedQuestion,
   });
 
   answers = response.data as IAnswer;
@@ -66,7 +73,7 @@ export async function askMimi(
   //save
   const saveResult = await saveReading({
     line_id: userId as string,
-    question: question as string,
+    question: cleanedQuestion,
     answer: {
       ...answers,
     },

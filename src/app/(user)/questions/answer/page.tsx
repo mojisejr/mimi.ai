@@ -1,19 +1,14 @@
 "use client";
-import {
-  Suspense,
-  useActionState,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import { Suspense, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/logo";
 import AnswerSection from "@/components/ui/answer-section";
 import { deleteAnswerById } from "@/actions/delete-answer";
-import { IDeleteAnswerType } from "@/interfaces/i-delete-answer";
+import { IDeleteReadingType } from "@/interfaces/i-delete-answer";
 import { useSearchParams } from "next/navigation";
+import { FaRegTrashAlt } from "react-icons/fa";
 
-let initState: IDeleteAnswerType = {
+let initState: IDeleteReadingType = {
   success: false,
   error: null,
   message: null,
@@ -25,7 +20,7 @@ function AnswerPage() {
   const { back, replace } = useRouter();
   const [isPending, startTransition] = useTransition();
   const [deleteResult, setDeleteResult] =
-    useState<IDeleteAnswerType>(initState);
+    useState<IDeleteReadingType>(initState);
 
   useEffect(() => {
     if (deleteResult.success && deleteResult.message != null) {
@@ -67,16 +62,21 @@ function AnswerPage() {
         <AnswerSection />
       </Suspense>
       <section className="h-1/6 flex w-full justify-between items-center px-4">
-        <button disabled={isPending} onClick={back} className="btn">
+        <button disabled={isPending} onClick={back} className="btn btn-primary">
           👈 กลับไปถามต่อ
         </button>
         <form action={handleDeleteSubmit}>
           <button
-            type="submit"
             disabled={isPending || !answerId}
-            className="btn btn-error btn-bordered btn-outline"
+            type="submit"
+            className="btn btn-error text-white flex items-center gap-1"
           >
-            {isPending ? "กำลังลบ..." : "ลบคำทำนาย"}
+            {isPending ? (
+              <div className="loading loading-sm loading-infinity"></div>
+            ) : (
+              <FaRegTrashAlt />
+            )}
+            {isPending ? <span>กำลังลบ..</span> : <span>ลบ</span>}
           </button>
         </form>
       </section>

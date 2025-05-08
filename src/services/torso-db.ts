@@ -274,21 +274,26 @@ export const getReading = async (lineId: string) => {
     const result = await torso.execute({
       sql: `
         SELECT 
-          id,
-          question,
-          header,
-          cards,
-          reading,
-          suggest,
-          final,
-          end,
-          notice,
-          is_reviewed,
-          created_at
-        FROM question_answer 
-        WHERE line_id = ? 
-        AND is_deleted = 0
-        ORDER BY created_at DESC
+          qa.id,
+          qa.question,
+          qa.header,
+          qa.cards,
+          qa.reading,
+          qa.suggest,
+          qa.final,
+          qa.end,
+          qa.notice,
+          qa.is_reviewed,
+          qa.created_at,
+          r.review_id as review_id,
+          r.accurate_level,
+          r.created_at as review_created_at,
+          r.review_period
+        FROM question_answer qa
+        LEFT JOIN review r ON qa.id = r.question_answer_id
+        WHERE qa.line_id = ? 
+        AND qa.is_deleted = 0
+        ORDER BY qa.created_at DESC
       `,
       args: [lineId],
     });
@@ -309,9 +314,86 @@ export const getReading = async (lineId: string) => {
       notice: row.notice as string,
       is_reviewed: row.is_reviewed as number,
       created_at: row.created_at as string,
+      review: row.review_id
+        ? {
+            review_id: row.review_id as number,
+            question_answer_id: row.id as number,
+            line_id: lineId,
+            accurate_level: row.accurate_level as number,
+            created_at: row.review_created_at as number,
+            review_period: row.review_period as number,
+          }
+        : undefined,
     }));
   } catch (error) {
     console.log("Error in getReading:", error);
     return [];
+  }
+};
+
+/**
+ * Creates a new review for a question answer
+ * @param data - Review data containing question_answer_id, line_id, accurate_level
+ * @returns boolean indicating success/failure
+ */
+export const createReview = async (data: {
+  question_answer_id: number;
+  line_id: string;
+  accurate_level: number;
+}) => {
+  try {
+    // Check if review already exists
+    console.log("start saving review !");
+    const existingReview = await torso.execute({
+      sql: `SELECT * FROM review WHERE question_answer_id = ?`,
+      args: [data.question_answer_id],
+    });
+
+    if (existingReview.rows.length > 0) {
+      return false;
+    }
+
+    // Get question creation time
+    const questionData = await torso.execute({
+      sql: `SELECT created_at FROM question_answer WHERE id = ?`,
+      args: [data.question_answer_id],
+    });
+
+    if (questionData.rows.length === 0) {
+      return false;
+    }
+
+    const questionCreatedAt = questionData.rows[0].created_at as number;
+    const currentTime = Math.floor(Date.now() / 1000);
+    const reviewPeriod = currentTime - questionCreatedAt;
+
+    // Create review and update is_reviewed in question_answer table
+    const result = await torso.batch([
+      {
+        sql: `INSERT INTO review (
+          question_answer_id,
+          line_id,
+          accurate_level,
+          created_at,
+          review_period
+        ) VALUES (?, ?, ?, ?, ?)`,
+        args: [
+          data.question_answer_id,
+          data.line_id,
+          data.accurate_level,
+          currentTime,
+          reviewPeriod,
+        ],
+      },
+      {
+        sql: `UPDATE question_answer SET is_reviewed = 1 WHERE id = ?`,
+        args: [data.question_answer_id],
+      },
+    ]);
+
+    return result.length > 0;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 };
