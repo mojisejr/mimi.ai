@@ -4,10 +4,9 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { MdOutlineReviews } from "react-icons/md";
 import { PiReadCvLogoBold } from "react-icons/pi";
 import { Reading } from "@/interfaces/i-readings";
-import Link from "next/link";
 import RatingStars from "./rating-stars";
-import { LuBadgeCheck } from "react-icons/lu";
 import { getPercentageFromScore } from "@/utils/accuracy-percent";
+import { redirect } from "next/navigation";
 
 interface HistoryCardProps {
   reading: Reading;
@@ -24,6 +23,12 @@ export default function HistoryCard({
 }: HistoryCardProps) {
   const { id, question, cards, final, created_at, is_reviewed } = reading;
   const review = reading && reading.review ? reading.review : null;
+
+  const handleRedirectToReadningPage = () => {
+    localStorage.setItem("answerData", JSON.stringify(reading));
+
+    redirect(`/questions/answer?aid=${id}`);
+  };
 
   return (
     <div className="flex min-w-[330px] max-w-md shadow-xl rounded-xl border-primary flex-col overflow-hidden">
@@ -83,13 +88,16 @@ export default function HistoryCard({
             <MdOutlineReviews />
             <span>รีวิว</span>
           </button>
-          <Link
-            href={`/questions/answer?aid=${id}`}
-            className="btn btn-xs btn-primary flex gap-1 items-center"
-          >
-            <PiReadCvLogoBold />
-            <span>อ่าน</span>
-          </Link>
+          <form action={handleRedirectToReadningPage}>
+            <button
+              type="submit"
+              // href={`/questions/answer?aid=${id}`}
+              className="btn btn-xs btn-primary flex gap-1 items-center"
+            >
+              <PiReadCvLogoBold />
+              <span>อ่าน</span>
+            </button>
+          </form>
         </div>
       </div>
     </div>

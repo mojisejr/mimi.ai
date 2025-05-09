@@ -39,18 +39,6 @@ export default function AnswerSection() {
     };
   }, [parsedAnswer]);
 
-  // if (!parsedAnswer || parsedAnswer == null) {
-  //   return (
-  //     <div className="relative h-screen w-full max-w-xl overflow-hidden">
-  //       <section className="h-6/6 overflow-scroll flex items-center">
-  //         <Link href="/questions" className="btn">
-  //           ไม่พบคำตอบ
-  //         </Link>
-  //       </section>
-  //     </div>
-  //   );
-  // }
-
   const [flipped, setFlipped] = useState(
     Array(parsedAnswer?.cards.length).fill(false)
   );
@@ -82,7 +70,7 @@ export default function AnswerSection() {
       {parsedAnswer == null ? (
         <div>Loading ... </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4 max-w-2xl">
           <h1 className="border-l-2 border-accent p-2">
             {parsedAnswer.header}
           </h1>
@@ -90,7 +78,7 @@ export default function AnswerSection() {
             <div className="text-xl font-bold">🎴 ไพ่ที่หยิบได้</div>
             <div className="my-4">
               {parsedAnswer.cards.length <= 3 ? (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 max-w-md">
                   {parsedAnswer.cards.map((card, index) => (
                     <AnswerCard
                       key={index + 1}

@@ -14,7 +14,7 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
   return (
     <motion.div
       initial={{ rotateY: 360 }}
-      className="relative w-26 h-48 cursor-pointer"
+      className="relative max-w-[150px] h-48  cursor-pointer"
       onClick={onClick}
       animate={{ rotateY: flipped ? 360 : 0 }}
       transition={{ duration: 0.4 }}
@@ -28,9 +28,10 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
         <Image
           src={`/images/cards/${image}`}
           alt={name}
-          width={512}
-          height={512}
-          className="w-full h-full rounded-xl"
+          fill
+          // width={512}
+          // height={512}
+          // className="w-full h-full rounded-xl"
         />
       </motion.div>
 

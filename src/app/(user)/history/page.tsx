@@ -90,7 +90,7 @@ export default function QuestionHistory() {
   }
 
   return (
-    <div className="h-5/6 pt-[h-1/6] gap-6 px-2 pb-6 overflow-y-scroll">
+    <div className="h-5/6 pt-[h-1/6] gap-6 px-4 pb-6 overflow-y-scroll">
       {readings.map((reading) => (
         <HistoryCard
           key={reading.id}
