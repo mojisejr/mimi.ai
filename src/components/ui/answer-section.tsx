@@ -78,7 +78,7 @@ export default function AnswerSection() {
   };
 
   return (
-    <section className="h-4/6 pt-[h-1/6]flex items-center p-4 overflow-y-auto">
+    <section className="h-4/6 pt-[h-1/6] p-4 overflow-y-auto">
       {parsedAnswer == null ? (
         <div>Loading ... </div>
       ) : (
