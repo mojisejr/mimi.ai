@@ -14,6 +14,21 @@ let initState: IDeleteReadingType = {
   message: null,
 };
 
+export default function AnswerPageWrapper() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-4/6 pt-[h-1/6] flex flex-col items-center gap-2 flex-1">
+          <Logo />
+          <div>รอสักครู่ 😊</div>
+        </div>
+      }
+    >
+      <AnswerPage />
+    </Suspense>
+  );
+}
+
 function AnswerPage() {
   const searchParam = useSearchParams();
   const answerId = searchParam.get("aid");
@@ -41,7 +56,6 @@ function AnswerPage() {
       return;
     }
 
-    console.log("answerId: ", answerId);
     startTransition(async () => {
       formData.append("answerId", answerId);
       const result = await deleteAnswerById(formData);
@@ -53,7 +67,7 @@ function AnswerPage() {
     <>
       <Suspense
         fallback={
-          <div className="mt-10 flex flex-col items-center gap-2 flex-1">
+          <div className="h-4/6 pt-[h-1/6] flex flex-col items-center gap-2 flex-1">
             <Logo />
             <div>รอสักครู่ 😊</div>
           </div>
@@ -81,20 +95,5 @@ function AnswerPage() {
         </form>
       </section>
     </>
-  );
-}
-
-export default function AnswerPageWrapper() {
-  return (
-    <Suspense
-      fallback={
-        <div className="mt-10 flex flex-col items-center gap-2 flex-1">
-          <Logo />
-          <div>รอสักครู่ 😊</div>
-        </div>
-      }
-    >
-      <AnswerPage />
-    </Suspense>
   );
 }
