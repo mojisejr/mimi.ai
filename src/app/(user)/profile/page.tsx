@@ -1,6 +1,5 @@
 "use client";
 import { getUser } from "@/actions/get-user-info";
-import ProfileCard from "@/components/profile-card";
 import ProfileCardV2 from "@/components/profile-card-v2";
 import ReferralBox from "@/components/referral-box";
 import FullScreenContainer from "@/components/ui/full-screen-container";
@@ -35,14 +34,15 @@ export default function UserProfilePage() {
 
   return (
     <FullScreenContainer>
-      <div className="px-6">
+      <div className="px-6 overflow-y-scroll h-full pt-4 pb-6">
         {loading && profile
           ? null
           : userInfo && (
-              // <ProfileCard user={userInfo} image={profile?.pictureUrl!} >
-              <ProfileCardV2 user={userInfo} image={profile?.pictureUrl!} />
+              <div className="grid grid-col-1 gap-2">
+                <ProfileCardV2 user={userInfo} image={profile?.pictureUrl!} />
+                <ReferralBox user={userInfo} />
+              </div>
             )}
-        {/* <ReferralBox /> */}
       </div>
     </FullScreenContainer>
   );
