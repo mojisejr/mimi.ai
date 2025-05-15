@@ -1,6 +1,6 @@
 "use server";
 import { IAnswer, IAnswerResponseMessage } from "@/interfaces/i-answer";
-import { saveReading, subtractPointToUser } from "@/services/torso-db";
+import { saveReading, subtractPointToUser } from "@/services/torso";
 import axios from "axios";
 import { cleanInput } from "@/utils/clean-input";
 
@@ -72,7 +72,7 @@ export async function askMimi(
 
   //save
   const saveResult = await saveReading({
-    line_id: userId as string,
+    lineId: userId as string,
     question: cleanedQuestion,
     answer: {
       ...answers,

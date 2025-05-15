@@ -10,7 +10,7 @@ export interface Reading {
   final: any[];
   end: string;
   notice: string;
-  is_reviewed: number;
-  created_at: string;
+  isReviewed: number;
+  createdAt: string;
   review?: IReview;
 }

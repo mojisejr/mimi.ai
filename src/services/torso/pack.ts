@@ -1,5 +1,5 @@
 import { PackageInfo } from "@/interfaces/i-package";
-import { torso } from "../torso-db";
+import { torso } from "./torso-db";
 export const getActivePack = async () => {
   try {
     const pack = await torso.execute({

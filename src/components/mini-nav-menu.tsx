@@ -15,6 +15,9 @@ export default function MiniNavMenu() {
         className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
       >
         <li>
+          <Link href="/profile">โปรไฟล์</Link>
+        </li>
+        <li>
           <Link href="/questions">ดูดวง</Link>
         </li>
         <li>

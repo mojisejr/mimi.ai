@@ -1,5 +1,5 @@
 "use server";
-import { deleteReading } from "@/services/torso-db";
+import { deleteReading } from "@/services/torso";
 import { revalidatePath } from "next/cache";
 
 export async function deleteAnswerById(data: FormData): Promise<{

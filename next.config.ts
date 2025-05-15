@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "api.omise.co",
       },
+      {
+        protocol: "https",
+        hostname: "profile.line-scdn.net",
+      },
     ],
   },
 };
