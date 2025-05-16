@@ -33,9 +33,9 @@ export default function ReviewDialog({
     startTransition(async () => {
       try {
         const result = await createReviewAction({
-          question_answer_id: readingId,
-          line_id: lineId,
-          accurate_level: rating,
+          questionAnswerId: readingId,
+          lineId: lineId,
+          accurateLevel: rating,
         });
 
         if (result.success) {

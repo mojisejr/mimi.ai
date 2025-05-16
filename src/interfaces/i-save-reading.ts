@@ -1,7 +1,7 @@
 import { IAnswer } from "./i-answer";
 
 export interface ISaveReading {
-  line_id: string;
+  lineId: string;
   question: string;
   answer: IAnswer;
 }

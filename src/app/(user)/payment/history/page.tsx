@@ -1,4 +1,4 @@
-import { getPaymentHistory } from "@/services/torso-db";
+import { getPaymentHistory } from "@/services/torso";
 import React from "react";
 import dayjs from "dayjs";
 

@@ -21,7 +21,7 @@ export default function HistoryCard({
   deleteDialog,
   reviewDialog,
 }: HistoryCardProps) {
-  const { id, question, cards, final, created_at, is_reviewed } = reading;
+  const { id, question, cards, final, createdAt, isReviewed } = reading;
   const review = reading && reading.review ? reading.review : null;
 
   const handleRedirectToReadningPage = () => {
@@ -40,21 +40,19 @@ export default function HistoryCard({
           <h2 className="font-semibold text-primary">{question}?</h2>
           <div className="flex gap-1 items-center">
             <div className="badge badge-sm text-[9px] badge-accent">
-              {new Date(parseInt(created_at) * 1000).toLocaleDateString()}
+              {new Date(parseInt(createdAt) * 1000).toLocaleDateString()}
             </div>
 
             <div
               className={`badge badge-sm text-[9px] ${
-                is_reviewed > 0 ? "badge-warning" : null
+                isReviewed > 0 ? "badge-warning" : null
               }`}
             >
-              {is_reviewed > 0 ? "reviewed" : "no-review"}
+              {isReviewed > 0 ? "reviewed" : "no-review"}
             </div>
             <div className="flex items-center text-xs gap-[2px]">
-              <RatingStars starNumber={review?.accurate_level ?? 0} />
-              <span>
-                {getPercentageFromScore(review?.accurate_level ?? 0)}%
-              </span>
+              <RatingStars starNumber={review?.accurateLevel ?? 0} />
+              <span>{getPercentageFromScore(review?.accurateLevel ?? 0)}%</span>
             </div>
           </div>
           <div>
@@ -83,7 +81,7 @@ export default function HistoryCard({
           <button
             onClick={() => reviewDialog(lineId, question, id)}
             className="btn btn-xs btn-primary flex gap-1 items-center"
-            disabled={is_reviewed > 0}
+            disabled={isReviewed > 0}
           >
             <MdOutlineReviews />
             <span>รีวิว</span>

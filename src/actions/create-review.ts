@@ -1,11 +1,11 @@
 "use server";
 
-import { createReview } from "@/services/torso-db";
+import { createReview } from "@/services/torso";
 
 export async function createReviewAction(data: {
-  question_answer_id: number;
-  line_id: string;
-  accurate_level: number;
+  questionAnswerId: number;
+  lineId: string;
+  accurateLevel: number;
 }) {
   try {
     const result = await createReview(data);

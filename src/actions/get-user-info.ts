@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserInfo } from "@/services/torso-db";
+import { getUserInfo } from "@/services/torso";
 
 export const getUser = async (userId: string) => {
   try {

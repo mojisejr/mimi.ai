@@ -1,4 +1,4 @@
-import { addPaymentHistory, addPointToUser } from "@/services/torso-db";
+import { addPaymentHistory, addPointToUser } from "@/services/torso";
 import { NextRequest, NextResponse } from "next/server";
 import { omise } from "@/services/omise";
 
