@@ -5,7 +5,9 @@ import ReferralBox from "@/components/referral-box";
 import FullScreenContainer from "@/components/ui/full-screen-container";
 import { IUser } from "@/interfaces/i-user-info";
 import { useLine } from "@/providers/line";
+import { UserProvider } from "@/contexts/user-context";
 import React, { useEffect, useState } from "react";
+import LoadingScreen from "@/components/ui/loading-screen";
 
 export default function UserProfilePage() {
   const { profile } = useLine();
@@ -32,17 +34,19 @@ export default function UserProfilePage() {
     handleGetUserInfo();
   }, []);
 
+  if (loading || !userInfo || !profile) {
+    return <LoadingScreen />;
+  }
+
   return (
     <FullScreenContainer>
       <div className="px-6 overflow-y-scroll h-full pt-4 pb-6">
-        {loading && profile
-          ? null
-          : userInfo && (
-              <div className="grid grid-col-1 gap-2">
-                <ProfileCardV2 user={userInfo} image={profile?.pictureUrl!} />
-                <ReferralBox user={userInfo} />
-              </div>
-            )}
+        <UserProvider initialUser={userInfo}>
+          <div className="grid grid-col-1 gap-2">
+            <ProfileCardV2 image={profile.pictureUrl!} />
+            <ReferralBox />
+          </div>
+        </UserProvider>
       </div>
     </FullScreenContainer>
   );

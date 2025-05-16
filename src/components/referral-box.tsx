@@ -1,22 +1,86 @@
 "use client";
 
-import { IUser } from "@/interfaces/i-user-info";
 import { motion } from "framer-motion";
 import { FaCopy, FaUserPlus } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { IReferralCode } from "@/interfaces/i-referral";
+import { getReferralCodeAction } from "@/actions/get-referral-code";
+import { createReferralCodeAction } from "@/actions/create-referral-code";
+import { useReferralCodeAction } from "@/actions/use-referral-code";
+import { useUser } from "@/contexts/user-context";
 
 type Props = {
-  user: IUser;
+  image: string;
 };
 
-export default function ReferralBox({ user }: Props) {
+export default function ReferralBox() {
+  const { user, updateUserStats } = useUser();
   const [copied, setCopied] = useState(false);
-  const referralCode = user.lineId.slice(10, 18).toUpperCase();
+  const [referralCode, setReferralCode] = useState<IReferralCode | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [friendCode, setFriendCode] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchReferralCode = async () => {
+      try {
+        const code = await getReferralCodeAction(user.lineId);
+        setReferralCode(code);
+      } catch (error) {
+        console.error("Error fetching referral code:", error);
+      }
+    };
+
+    fetchReferralCode();
+  }, [user.lineId]);
+
+  const handleGenerateCode = async () => {
+    setIsLoading(true);
+    try {
+      await createReferralCodeAction(user.lineId);
+      const code = await getReferralCodeAction(user.lineId);
+      setReferralCode(code);
+    } catch (error) {
+      console.error("Error generating referral code:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(referralCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (referralCode) {
+      navigator.clipboard.writeText(referralCode.code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleUseReferralCode = async () => {
+    if (!friendCode.trim()) {
+      alert("กรุณากรอกรหัสแนะนำ");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await useReferralCodeAction(user.lineId, friendCode);
+
+      if (result.success && result.data) {
+        // อัพเดท user stats ใน context
+        updateUserStats(result.data.coins, result.data.exp);
+        alert(
+          `ยินดีด้วย! คุณได้รับ ${result.data.coins} coins และ ${result.data.exp} exp`
+        );
+        setFriendCode(""); // เคลียร์ input หลังจากใช้รหัสสำเร็จ
+      } else {
+        alert(result.error?.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      }
+    } catch (error) {
+      console.error("Error using referral code:", error);
+      alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -67,38 +131,58 @@ export default function ReferralBox({ user }: Props) {
           <h2 className="text-xl font-bold text-primary-content">เชิญเพื่อน</h2>
         </motion.div>
 
-        {/* Referral Code */}
-        <motion.div
-          className="bg-secondary/30 rounded-xl p-4 flex flex-col items-center gap-2"
-          whileHover={{ scale: 1.02 }}
-        >
-          <span className="text-sm text-primary-content/80">
-            รหัสแนะนำของคุณ
-          </span>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-primary-content tracking-wider">
-              {referralCode}
+        {/* Referral Code Section */}
+        {referralCode ? (
+          <motion.div
+            className="bg-secondary/30 rounded-xl p-4 flex flex-col items-center gap-2"
+            whileHover={{ scale: 1.02 }}
+          >
+            <span className="text-sm text-primary-content/80">
+              รหัสแนะนำของคุณ
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-primary-content tracking-wider">
+                {referralCode.code}
+              </span>
+              <motion.button
+                className="btn btn-circle btn-sm bg-accent/50 hover:bg-accent/70 border-none"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCopy}
+              >
+                <FaCopy className="text-primary-content" />
+              </motion.button>
+            </div>
+            {copied && (
+              <motion.span
+                className="text-xs text-white"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+              >
+                คัดลอกแล้ว!
+              </motion.span>
+            )}
+          </motion.div>
+        ) : (
+          <motion.div
+            className="bg-secondary/30 rounded-xl p-4 flex flex-col items-center gap-2"
+            whileHover={{ scale: 1.02 }}
+          >
+            <span className="text-sm text-primary-content/80 mb-2">
+              ยังไม่มีรหัสแนะนำ
             </span>
             <motion.button
-              className="btn btn-circle btn-sm bg-accent/50 hover:bg-accent/70 border-none"
-              whileHover={{ scale: 1.1 }}
+              className="btn btn-primary"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleCopy}
+              onClick={handleGenerateCode}
+              disabled={isLoading}
             >
-              <FaCopy className="text-primary-content" />
+              {isLoading ? "กำลังสร้างรหัส..." : "สร้างรหัสแนะนำ"}
             </motion.button>
-          </div>
-          {copied && (
-            <motion.span
-              className="text-xs text-white"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-            >
-              คัดลอกแล้ว!
-            </motion.span>
-          )}
-        </motion.div>
+          </motion.div>
+        )}
 
         {/* Enter Friend's Referral Code */}
         <motion.div
@@ -114,28 +198,21 @@ export default function ReferralBox({ user }: Props) {
               placeholder="ใส่รหัสแนะนำ"
               className="input input-bordered w-full max-w-xs bg-primary/20 text-primary-content placeholder:text-primary-content/50"
               maxLength={8}
+              value={friendCode}
+              onChange={(e) => setFriendCode(e.target.value)}
+              disabled={isSubmitting}
             />
             <motion.button
               className="btn btn-primary btn-sm"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={handleUseReferralCode}
+              disabled={isSubmitting}
             >
-              ใช้รหัส
+              {isSubmitting ? "กำลังดำเนินการ..." : "ใช้รหัส"}
             </motion.button>
           </div>
         </motion.div>
-
-        {/* Benefits */}
-        {/* <div className="mt-4">
-          <h3 className="text-sm font-medium text-primary-content mb-2">
-            สิทธิประโยชน์
-          </h3>
-          <ul className="text-xs text-primary-content/80 space-y-1">
-            <li>• รับ 100 coins เมื่อเพื่อนใช้รหัสของคุณ</li>
-            <li>• รับ 50 points เมื่อเพื่อนใช้รหัสของคุณ</li>
-            <li>• เพื่อนที่ใช้รหัสจะได้รับ 50 coins</li>
-          </ul>
-        </div> */}
       </div>
     </motion.div>
   );

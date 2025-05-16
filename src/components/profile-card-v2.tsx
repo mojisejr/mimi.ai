@@ -4,10 +4,9 @@ import { motion } from "framer-motion";
 import { FaCoins } from "react-icons/fa";
 import { IoMdStar } from "react-icons/io";
 import Image from "next/image";
-import { IUser } from "@/interfaces/i-user-info";
+import { useUser } from "@/contexts/user-context";
 
 type Props = {
-  user: IUser;
   image: string;
 };
 
@@ -22,7 +21,9 @@ const calculateProgress = (
   return Math.min(Math.max(progress, 0), 100);
 };
 
-export default function ProfileCardV2({ user, image }: Props) {
+export default function ProfileCardV2({ image }: Props) {
+  const { user } = useUser();
+
   const progress = calculateProgress(
     user.exp,
     user.nextExpRequired,
