@@ -1,6 +1,7 @@
 "use server";
 
-import { createReview } from "@/services/torso";
+import { createReview, updateActivityBonus } from "@/services/torso";
+import { levelUp } from "@/services/torso/level";
 
 export async function createReviewAction(data: {
   questionAnswerId: number;
@@ -8,7 +9,25 @@ export async function createReviewAction(data: {
   accurateLevel: number;
 }) {
   try {
+    const activityCode = "reading_review";
     const result = await createReview(data);
+
+    if (result) {
+      const bonusUpdateResult = await updateActivityBonus(
+        data.lineId,
+        activityCode
+      );
+
+      if (!bonusUpdateResult.success) {
+        return {
+          success: false,
+          message: "Bonus Update Failed",
+        };
+      }
+    }
+
+    await levelUp(data.lineId);
+
     return {
       success: result,
       message: result

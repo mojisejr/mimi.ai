@@ -1,13 +1,19 @@
 "use server";
 import { IAnswer, IAnswerResponseMessage } from "@/interfaces/i-answer";
-import { saveReading, subtractPointToUser } from "@/services/torso";
+import {
+  saveReading,
+  subtractPointToUser,
+  updateActivityBonus,
+} from "@/services/torso";
 import axios from "axios";
 import { cleanInput } from "@/utils/clean-input";
+import { levelUp } from "@/services/torso/level";
 
 export async function askMimi(
   prevState: IAnswerResponseMessage,
   data: FormData
 ): Promise<IAnswerResponseMessage> {
+  const activityCode = "point_used";
   const question = data.get("question");
   const userId = data.get("userId");
   const user = data.get("user");
@@ -94,6 +100,22 @@ export async function askMimi(
       message: null,
     };
   }
+
+  const bonusUpdateResult = await updateActivityBonus(
+    userId as string,
+    activityCode
+  );
+
+  if (!bonusUpdateResult.success) {
+    return {
+      success: false,
+      error: "ไม่สามารถ update bonus ได้",
+      answerId: null,
+      message: null,
+    };
+  }
+
+  await levelUp(userId as string);
 
   return {
     success: true,

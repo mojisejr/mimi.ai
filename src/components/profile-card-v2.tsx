@@ -13,10 +13,10 @@ type Props = {
 const calculateProgress = (
   exp: number,
   nextExpRequired: number,
-  currentExpRequired: number
+  nextExpTotal: number
 ): number => {
-  const currentExp = exp - currentExpRequired;
-  const totalExpForLevel = nextExpRequired - currentExpRequired;
+  const currentExp = exp - nextExpRequired;
+  const totalExpForLevel = nextExpTotal - nextExpRequired;
   const progress = (currentExp / totalExpForLevel) * 100;
   return Math.min(Math.max(progress, 0), 100);
 };
@@ -27,11 +27,11 @@ export default function ProfileCardV2({ image }: Props) {
   const progress = calculateProgress(
     user.exp,
     user.nextExpRequired,
-    user.currentExpRequired
+    user.nextExpTotal
   );
 
-  const currentExp = user.exp - user.currentExpRequired;
-  const maxExp = user.nextExpRequired - user.currentExpRequired;
+  const currentExp = user.exp;
+  const maxExp = user.nextExpTotal;
 
   return (
     <motion.div
