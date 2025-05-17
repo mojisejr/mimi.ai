@@ -107,12 +107,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
       </form>
       <div className="flex justify-center mt-8 flex-col items-center">
         <VoiceInputButton
-          disabled={
-            pending ||
-            (profile?.currentPoint as number) <= 0 ||
-            count <= 0 ||
-            isIOS
-          }
+          disabled={pending || (profile?.currentPoint as number) <= 0 || isIOS}
         />
         {isIOS ? (
           <span className="text-xs text-slate-400">

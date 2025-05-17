@@ -25,8 +25,13 @@ export async function askMimi(
 
   const cleanedQuestion = cleanInput(question as string);
 
-  if (!cleanedQuestion) {
-    throw new Error("กรุณาป้อนคำถาม");
+  if (!cleanedQuestion || cleanedQuestion.trim() === "") {
+    return {
+      success: false,
+      error: "กรุณาป้อนคำถาม ไม่สามารถส่งคำถามที่เป็นช่องว่างได้",
+      answerId: null,
+      message: null,
+    };
   }
 
   const response = await axios.post(process.env.N8N_URL!, {
