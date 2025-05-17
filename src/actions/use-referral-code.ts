@@ -1,15 +1,12 @@
 "use server";
 
 import { useReferralCode } from "@/services/torso/referral";
-import {
-  IReferralError,
-  IReferralResult,
-} from "@/interfaces/i-referral-code-action";
+import { IReferralResult } from "@/interfaces/i-referral-code-action";
 
-export async function useReferralCodeAction(
+export const useReferralCodeAction = async (
   referrerLineId: string,
   code: string
-): Promise<IReferralResult> {
+): Promise<IReferralResult> => {
   try {
     const result = await useReferralCode(referrerLineId, code);
     return {
@@ -64,4 +61,4 @@ export async function useReferralCodeAction(
       },
     };
   }
-}
+};
