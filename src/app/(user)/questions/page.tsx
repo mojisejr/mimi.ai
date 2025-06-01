@@ -2,13 +2,17 @@
 import HeroQuestion from "@/components/hero-question";
 import TypingText from "@/components/typing-text/text";
 import QuestionSubmit from "@/components/question-submit";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import DailyLoginDialog from "@/components/daily-login-dialog";
+import { useLine } from "@/providers/line";
 
 export default function QuestionPage() {
   const [asking, setAsking] = useState<{ status: boolean; question: string }>({
     status: false,
     question: "",
   });
+  const [showDailyLogin, setShowDailyLogin] = useState(true);
+  const { profile } = useLine();
 
   const handleAskingState = (status: boolean, question: string) => {
     setAsking({ status, question });
@@ -38,6 +42,15 @@ export default function QuestionPage() {
           <QuestionSubmit setAsking={handleAskingState} />
         </div>
       </section>
+
+      {/* Daily Login Dialog */}
+      {profile?.userId && (
+        <DailyLoginDialog
+          isOpen={showDailyLogin}
+          onClose={() => setShowDailyLogin(false)}
+          lineId={profile.userId}
+        />
+      )}
     </div>
   );
 }
