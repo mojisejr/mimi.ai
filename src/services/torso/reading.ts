@@ -78,7 +78,13 @@ export const deleteReading = async (id: number) => {
 export const getReading = async (lineId: string) => {
   try {
     const result = await torso.execute({
-      sql: `SELECT * FROM question_answer WHERE line_id = ? ORDER BY created_at DESC`,
+      sql: `SELECT qa.id, qa.question, qa.header, qa.cards, qa.reading, qa.final, qa.suggest, qa.end, qa.notice, qa.created_at,
+      rev.accurate_level,
+      rev.review_id,
+      rev.liked,
+      rev.review_period,
+      rev.created_at as rev_created_at
+      FROM question_answer as qa LEFT JOIN review as rev ON qa.id = rev.question_answer_id WHERE qa.line_id = ? ORDER BY qa.created_at DESC`,
       args: [lineId],
     });
 
@@ -97,6 +103,14 @@ export const getReading = async (lineId: string) => {
         suggest: JSON.parse(r.suggest as string),
         end: r.end,
         notice: r.notice,
+        review: {
+          reviewId: r.review_id,
+          reviewPeriod: r.review_period,
+          accurateLevel: r.accurate_level,
+          questionAnswerId: r.id,
+          createdAt: r.rev_created_at,
+        },
+        createdAt: r.created_at,
       } as Reading;
     });
     return readings;
