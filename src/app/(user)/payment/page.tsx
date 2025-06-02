@@ -32,7 +32,7 @@ export default function Page() {
   return (
     <div className="h-5/6 w-full overflow-y-scroll">
       <Suspense fallback={<LoadingScreen />}>
-        <div className="flex flex-col gap-4 md:flex-row p-4">
+        <div className="flex flex-col gap-4 md:flex-row p-4 items-center md:justify-center">
           {packs &&
             packs.map((p) => (
               <CreditCard
