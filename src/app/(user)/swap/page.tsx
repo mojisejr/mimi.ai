@@ -1,138 +1,242 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaExchangeAlt, FaCoins, FaStar } from "react-icons/fa";
+import { FaCoins, FaStar } from "react-icons/fa";
 import { IoMdSwap } from "react-icons/io";
-
-// Mock data
-const MOCK_RATE = 10; // 10 coins = 1 point
-const MOCK_USER_COINS = 1000;
+import { getExchangeSetting } from "@/actions/get-exchange-setting";
+import LoadingScreen from "@/components/ui/loading-screen";
+import { useLine } from "@/providers/line";
+import { getUser } from "@/actions/get-user-info";
+import { IUser } from "@/interfaces/i-user-info";
 
 export default function PointSwapPage() {
+  const { profile } = useLine();
+  const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [coins, setCoins] = useState<string>("");
   const [points, setPoints] = useState<string>("");
+  const [rate, setRate] = useState<number>(0);
+  const [userCoins, setUserCoins] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    handleGetExchageRate();
+    handleGetUserInfo();
+  }, []);
+
+  const handleGetExchageRate = () => {
+    setLoading(true);
+    getExchangeSetting()
+      .then((exchange) => {
+        setRate(exchange?.coinPerUnit ?? 0);
+        setLoading(false);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleGetUserInfo = () => {
+    setLoading(true);
+    if (!profile) return;
+    getUser(profile.userId)
+      .then((profile) => {
+        setUserInfo(profile);
+        setUserCoins(profile?.coins ?? 0);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false))
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const handleCoinsChange = (value: string) => {
-    setCoins(value);
-    const calculatedPoints = value
-      ? (Number(value) / MOCK_RATE).toString()
+    if (rate <= 0) return;
+    const intValue = value ? Math.floor(Number(value)) : "";
+    setCoins(intValue.toString());
+    const calculatedPoints = intValue
+      ? Math.floor(Number(intValue) / rate).toString()
       : "";
     setPoints(calculatedPoints);
   };
 
   const handlePointsChange = (value: string) => {
-    setPoints(value);
-    const calculatedCoins = value ? (Number(value) * MOCK_RATE).toString() : "";
+    if (rate <= 0) return;
+    const intValue = value ? Math.floor(Number(value)) : "";
+    setPoints(intValue.toString());
+    const calculatedCoins = intValue
+      ? (Number(intValue) * rate).toString()
+      : "";
     setCoins(calculatedCoins);
   };
 
+  const isValidSwapAmount = (coins: string): boolean => {
+    if (!coins || rate <= 0) return false;
+    const coinAmount = Number(coins);
+    return coinAmount > 0 && coinAmount <= userCoins && coinAmount % rate === 0;
+  };
+
   const handleSwap = () => {
+    if (rate <= 0 || !isValidSwapAmount(coins)) return;
     // Mock swap function
     console.log("แลก", coins, "เหรียญเป็น", points, "คะแนน");
   };
 
   return (
-    <div className="h-5/6 bg-base-200 p-4 overflow-y-scroll">
-      <div className="max-w-md mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="card bg-base-100 shadow-xl"
-        >
-          <div className="card-body">
-            <h2 className="card-title text-2xl font-bold mb-4">
-              แลกเหรียญเป็นคะแนน
-            </h2>
+    <div className="h-5/6 bg-base-200 p-4 overflow-y-scroll w-full">
+      {!loading && rate > 0 && userInfo ? (
+        <div className="max-w-md mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="card bg-gradient-to-br from-primary/90 to-secondary/90 shadow-xl backdrop-blur-sm overflow-hidden"
+          >
+            {/* Mystical background elements */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-primary/20 blur-3xl"></div>
+              <div className="absolute top-40 -right-20 w-60 h-60 rounded-full bg-secondary/20 blur-3xl"></div>
+              <div className="absolute -bottom-20 left-20 w-40 h-40 rounded-full bg-accent/20 blur-3xl"></div>
 
-            {/* Available Balance */}
-            <div className="bg-base-200 rounded-lg p-4 mb-4">
-              <p className="text-sm opacity-70">ยอดเหรียญที่มี</p>
-              <div className="flex items-center gap-2">
-                <FaCoins className="text-yellow-500" />
-                <span className="font-bold">{MOCK_USER_COINS} เหรียญ</span>
+              {/* Stars */}
+              <div className="stars absolute inset-0">
+                {[...Array(10)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 bg-white rounded-full"
+                    style={{
+                      top: `${Math.random() * 100}%`,
+                      left: `${Math.random() * 100}%`,
+                    }}
+                    animate={{
+                      opacity: [0.2, 0.8, 0.2],
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                      duration: 2 + Math.random() * 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                      repeatType: "reverse",
+                    }}
+                  />
+                ))}
               </div>
             </div>
 
-            {/* Swap Interface */}
-            <div className="space-y-4">
-              {/* From */}
-              <div className="bg-base-200 rounded-lg p-4">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm opacity-70">จาก</span>
-                  <button
-                    className="btn btn-ghost btn-xs"
-                    onClick={() =>
-                      handleCoinsChange(MOCK_USER_COINS.toString())
-                    }
-                  >
-                    จำนวนสูงสุด
-                  </button>
-                </div>
+            <div className="card-body relative">
+              <h2 className="card-title text-2xl font-bold mb-4 text-white">
+                แลกเหรียญเป็นคะแนน
+              </h2>
+
+              {/* Available Balance */}
+              <motion.div
+                className="bg-base-200/30 rounded-lg p-4 mb-4 backdrop-blur-sm"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <p className="text-sm opacity-70 text-white">ยอดเหรียญที่มี</p>
                 <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={coins}
-                    onChange={(e) => handleCoinsChange(e.target.value)}
-                    placeholder="0.0"
-                    className="input input-ghost w-full text-2xl"
-                  />
-                  <div className="flex items-center gap-2 bg-base-300 px-3 py-2 rounded-lg">
-                    <FaCoins className="text-yellow-500" />
-                    <span>เหรียญ</span>
-                  </div>
+                  <FaCoins className="text-yellow-500" />
+                  <span className="font-bold text-white">
+                    {userCoins} เหรียญ
+                  </span>
                 </div>
+              </motion.div>
+
+              {/* Swap Interface */}
+              <div className="space-y-4">
+                {/* From */}
+                <motion.div
+                  className="bg-base-200/30 rounded-lg p-4 backdrop-blur-sm"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm opacity-70 text-white">จาก</span>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="btn btn-ghost btn-xs text-white"
+                      onClick={() => handleCoinsChange(userCoins.toString())}
+                      aria-label="ใช้จำนวนเหรียญสูงสุด"
+                    >
+                      จำนวนสูงสุด
+                    </motion.button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={coins}
+                      onChange={(e) => handleCoinsChange(e.target.value)}
+                      placeholder="0"
+                      step="1"
+                      min="0"
+                      className="input input-ghost w-full text-2xl text-white placeholder:text-white/50"
+                      aria-label="จำนวนเหรียญที่ต้องการแลก"
+                    />
+                    <div className="flex items-center gap-2 bg-base-300/50 px-3 py-2 rounded-lg backdrop-blur-sm">
+                      <FaCoins className="text-yellow-500" />
+                      <span className="text-white">เหรียญ</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Swap Button */}
+                <div className="flex justify-center">
+                  <motion.button
+                    whileHover={{ scale: 1.1, rotate: 180 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="btn btn-circle btn-ghost text-white"
+                    aria-label="สลับการแลกเปลี่ยน"
+                  >
+                    <IoMdSwap className="text-2xl" />
+                  </motion.button>
+                </div>
+
+                {/* To */}
+                <motion.div
+                  className="bg-base-200/30 rounded-lg p-4 backdrop-blur-sm"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <span className="text-sm opacity-70 text-white">เป็น</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={points}
+                      onChange={(e) => handlePointsChange(e.target.value)}
+                      placeholder="0"
+                      step="1"
+                      min="0"
+                      className="input input-ghost w-full text-2xl text-white placeholder:text-white/50"
+                      aria-label="จำนวนคะแนนที่จะได้รับ"
+                    />
+                    <div className="flex items-center gap-2 bg-base-300/50 px-3 py-2 rounded-lg backdrop-blur-sm">
+                      <FaStar className="text-blue-500" />
+                      <span className="text-white">คะแนน</span>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
 
               {/* Swap Button */}
-              <div className="flex justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="btn btn-circle btn-ghost"
-                >
-                  <IoMdSwap className="text-2xl" />
-                </motion.button>
-              </div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn btn-primary w-full mt-6 text-white"
+                onClick={handleSwap}
+                disabled={!isValidSwapAmount(coins)}
+                aria-label="ยืนยันการแลกเปลี่ยน"
+              >
+                แลก
+              </motion.button>
 
-              {/* To */}
-              <div className="bg-base-200 rounded-lg p-4">
-                <span className="text-sm opacity-70">เป็น</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={points}
-                    onChange={(e) => handlePointsChange(e.target.value)}
-                    placeholder="0.0"
-                    className="input input-ghost w-full text-2xl"
-                  />
-                  <div className="flex items-center gap-2 bg-base-300 px-3 py-2 rounded-lg">
-                    <FaStar className="text-blue-500" />
-                    <span>คะแนน</span>
-                  </div>
-                </div>
+              {/* Rate Info */}
+              <div className="text-center mt-4 text-sm opacity-70 text-white">
+                <p>อัตราแลกเปลี่ยน: 1 คะแนน = {rate} เหรียญ</p>
               </div>
             </div>
-
-            {/* Swap Button */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn btn-primary w-full mt-6"
-              onClick={handleSwap}
-              disabled={
-                !coins || Number(coins) <= 0 || Number(coins) > MOCK_USER_COINS
-              }
-            >
-              แลก
-            </motion.button>
-
-            {/* Rate Info */}
-            <div className="text-center mt-4 text-sm opacity-70">
-              <p>อัตราแลกเปลี่ยน: 1 คะแนน = {MOCK_RATE} เหรียญ</p>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
+      ) : (
+        <LoadingScreen />
+      )}
     </div>
   );
 }
