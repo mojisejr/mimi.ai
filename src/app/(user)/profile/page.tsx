@@ -14,7 +14,6 @@ export default function UserProfilePage() {
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(profile);
 
   const handleGetUserInfo = () => {
     setLoading(true);
