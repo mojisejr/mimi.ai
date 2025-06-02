@@ -34,100 +34,96 @@ export default function CreditCard({
 }: RefillCardProps) {
   return (
     <motion.div
-      className="relative w-full max-w-[280px] mx-auto"
-      style={{ aspectRatio: "2/3" }}
-      animate={{
-        y: [0, -5, 0],
-        rotate: [0, 0.5, 0, -0.5, 0],
-      }}
-      transition={{
-        duration: 4,
-        ease: "easeInOut",
-        repeat: Number.POSITIVE_INFINITY,
-        repeatType: "reverse",
-      }}
+      className="card w-full max-w-[280px] bg-gradient-to-br from-primary/90 to-secondary/90 shadow-xl backdrop-blur-sm overflow-hidden"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -5 }}
     >
-      <div
-        className="absolute inset-0 rounded-md blur-md opacity-30 animate-pulse"
-        style={{
-          background: `
-            radial-gradient(circle at top left, rgba(255, 255, 255, 0.4) 10%, transparent 50%),
-            linear-gradient(to bottom right, rgba(255, 200, 100, 0.9), rgba(255, 150, 50, 0.8)),
-            radial-gradient(circle at center, rgba(255, 255, 255, 0.2), transparent 50%)
-          `,
-        }}
-      />
-      <div className="relative w-full h-full rounded-md overflow-hidden shadow-xl">
-        <div
-          className="absolute inset-0 animate-pulse"
-          style={{
-            animationDuration: "3s",
-            background: `
-              radial-gradient(circle at top left, rgba(255, 255, 255, 0.4) 10%, transparent 50%),
-              linear-gradient(to bottom right, rgba(255, 200, 100, 0.9), rgba(255, 150, 50, 0.8)),
-              radial-gradient(circle at center, rgba(255, 255, 255, 0.2), transparent 50%)
-            `,
-          }}
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-between p-6 text-amber-900">
-          {/* Header */}
-          <div className="text-center w-full">
-            <h3 className="text-xl font-bold mb-1">{packageTitle}</h3>
-            <div className="w-full h-px bg-amber-600/30 mb-2" />
-          </div>
+      {/* Mystical background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-primary/20 blur-3xl"></div>
+        <div className="absolute top-40 -right-20 w-60 h-60 rounded-full bg-secondary/20 blur-3xl"></div>
+        <div className="absolute -bottom-20 left-20 w-40 h-40 rounded-full bg-accent/20 blur-3xl"></div>
 
-          {/* Credit Amount */}
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <FaStar className="h-4 w-4" />
-              <span className="font-semibold">แพ็ค</span>
-              <FaStar className="h-4 w-4" />
-            </div>
-            <div className="text-3xl font-bold mb-2">{creditAmount} คำถาม</div>
-            <p className="text-xs opacity-80 italic mb-4">"{subtitle}"</p>
-          </div>
-
-          {/* Price */}
-          <div className="text-center w-full">
-            <div className="w-full h-px bg-amber-600/30 mb-2" />
-            <div className="text-lg font-semibold mb-1">ราคา</div>
-            <div className="text-2xl font-bold mb-4">
-              {currency}
-              {price}
-            </div>
-
-            {/* CTA Button */}
-            <button
-              onClick={() =>
-                setSelectedPack({
-                  id,
-                  packageTitle,
-                  creditAmount,
-                  creditAmountNumber,
-                  priceNumber,
-                  price,
-                  currency,
-                  subtitle,
-                  ctaText,
-                })
-              }
-              className="w-full py-2 bg-amber-900 text-amber-100 rounded-md hover:bg-amber-800 transition-colors font-medium swap-off"
-            >
-              {ctaText}
-            </button>
-            {/* <div className="w-full swap-on flex flex-col gap-2">
-                <button className="btn btn-sm text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800">
-                  Promptpay
-                </button>
-                <button className="btn btn-sm text-white bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:via-red-700 hover:to-red-800">
-                  True Money QR
-                </button>
-                <button className="btn btn-sm text-white bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800">
-                  Mobile Banking
-                </button>
-              </div> */}
-          </div>
+        {/* Stars */}
+        <div className="stars absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                opacity: [0.2, 0.8, 0.2],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 2 + Math.random() * 3,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: "reverse",
+              }}
+            />
+          ))}
         </div>
+      </div>
+
+      <div className="card-body relative z-10">
+        {/* Package Title */}
+        <motion.h2
+          className="text-center text-2xl font-bold text-primary-content mb-4"
+          whileHover={{ scale: 1.03 }}
+        >
+          {packageTitle}
+        </motion.h2>
+
+        {/* Credit Amount */}
+        <motion.div className="text-center mb-6" whileHover={{ scale: 1.05 }}>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <FaStar className="text-warning text-xl" />
+            <span className="font-semibold text-primary-content">แพ็ค</span>
+            <FaStar className="text-warning text-xl" />
+          </div>
+          <div className="text-3xl font-bold text-primary-content mb-2">
+            {creditAmount} คำถาม
+          </div>
+          <p className="text-sm text-primary-content/80 italic">"{subtitle}"</p>
+        </motion.div>
+
+        {/* Price */}
+        <motion.div className="text-center mb-6" whileHover={{ scale: 1.03 }}>
+          <div className="text-lg font-semibold text-primary-content mb-2">
+            ราคา
+          </div>
+          <div className="text-2xl font-bold text-primary-content">
+            {currency}
+            {price}
+          </div>
+        </motion.div>
+
+        {/* CTA Button */}
+        <motion.button
+          onClick={() =>
+            setSelectedPack({
+              id,
+              packageTitle,
+              creditAmount,
+              creditAmountNumber,
+              priceNumber,
+              price,
+              currency,
+              subtitle,
+              ctaText,
+            })
+          }
+          className="w-full py-3 bg-gradient-to-r from-primary to-secondary text-primary-content rounded-xl font-medium hover:opacity-90 transition-opacity"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          {ctaText}
+        </motion.button>
       </div>
     </motion.div>
   );
