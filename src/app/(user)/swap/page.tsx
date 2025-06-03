@@ -148,8 +148,8 @@ export default function PointSwapPage() {
             </div>
 
             <div className="card-body relative">
-              <h2 className="card-title text-2xl font-bold mb-4 text-white">
-                แลกเหรียญเป็นคะแนน
+              <h2 className="card-title text-xl font-bold mb-4 text-white">
+                แลกข้อคำถาม (Stars) ด้วย Coins
               </h2>
 
               {/* Available Balance */}
@@ -158,11 +158,11 @@ export default function PointSwapPage() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <p className="text-sm opacity-70 text-white">ยอดเหรียญที่มี</p>
+                <p className="text-sm opacity-70 text-white">คุณมี</p>
                 <div className="flex items-center gap-2">
-                  <FaCoins className="text-yellow-500" />
+                  <FaCoins className="text-yellow-400" />
                   <span className="font-bold text-white">
-                    {userCoins} เหรียญ
+                    {userCoins} Coins
                   </span>
                 </div>
               </motion.div>
@@ -198,9 +198,9 @@ export default function PointSwapPage() {
                       className="input input-ghost w-full text-2xl text-white placeholder:text-white/50"
                       aria-label="จำนวนเหรียญที่ต้องการแลก"
                     />
-                    <div className="flex items-center gap-2 bg-base-300/50 px-3 py-2 rounded-lg backdrop-blur-sm">
-                      <FaCoins className="text-yellow-500" />
-                      <span className="text-white">เหรียญ</span>
+                    <div className="flex items-center gap-2 bg-base-300/80 px-3 py-2 rounded-lg backdrop-blur-sm">
+                      <FaCoins className="text-yellow-200" />
+                      <span className="text-white">Coins</span>
                     </div>
                   </div>
                 </motion.div>
@@ -236,8 +236,8 @@ export default function PointSwapPage() {
                       aria-label="จำนวนคะแนนที่จะได้รับ"
                     />
                     <div className="flex items-center gap-2 bg-base-300/50 px-3 py-2 rounded-lg backdrop-blur-sm">
-                      <FaStar className="text-blue-500" />
-                      <span className="text-white">คะแนน</span>
+                      <FaStar className="text-green-300" />
+                      <span className="text-white">Stars</span>
                     </div>
                   </div>
                 </motion.div>
@@ -257,7 +257,7 @@ export default function PointSwapPage() {
 
               {/* Rate Info */}
               <div className="text-center mt-4 text-sm opacity-70 text-white">
-                <p>อัตราแลกเปลี่ยน: 1 คะแนน = {rate} เหรียญ</p>
+                <p>อัตราแลกเปลี่ยน: 1 Star = {rate} Coins</p>
               </div>
             </div>
           </motion.div>

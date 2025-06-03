@@ -5,6 +5,7 @@ import { FaCoins } from "react-icons/fa";
 import { IoMdStar } from "react-icons/io";
 import Image from "next/image";
 import { useUser } from "@/contexts/user-context";
+import { useEffect, useState } from "react";
 
 type Props = {
   image: string;
@@ -15,20 +16,31 @@ const calculateProgress = (
   nextExpRequired: number,
   nextExpTotal: number
 ): number => {
-  const currentExp = exp - nextExpRequired;
-  const totalExpForLevel = nextExpTotal - nextExpRequired;
-  const progress = (currentExp / totalExpForLevel) * 100;
+  // คำนวณ exp ที่เหลือต้องใช้เพื่อไปถึงเลเวลถัดไป
+  const remainingExp = nextExpTotal - exp;
+
+  // คำนวณ exp ทั้งหมดที่ต้องใช้ในเลเวลนี้
+  const totalExpForLevel = nextExpTotal - (nextExpTotal - nextExpRequired);
+
+  // คำนวณ progress
+  const progress = ((totalExpForLevel - remainingExp) / totalExpForLevel) * 100;
+
+  // ตรวจสอบค่า progress ต้องอยู่ระหว่าง 0-100
   return Math.min(Math.max(progress, 0), 100);
 };
 
 export default function ProfileCardV2({ image }: Props) {
   const { user } = useUser();
+  const [progress, setProgress] = useState(0);
 
-  const progress = calculateProgress(
-    user.exp,
-    user.nextExpRequired,
-    user.nextExpTotal
-  );
+  useEffect(() => {
+    const newProgress = calculateProgress(
+      user.exp,
+      user.nextExpRequired,
+      user.nextExpTotal
+    );
+    setProgress(newProgress);
+  }, [user.exp, user.nextExpRequired, user.nextExpTotal]);
 
   const currentExp = user.exp;
   const maxExp = user.nextExpTotal;
@@ -119,6 +131,7 @@ export default function ProfileCardV2({ image }: Props) {
           </div>
           <div className="w-full h-3 bg-base-300/50 rounded-full overflow-hidden">
             <motion.div
+              key={`${currentExp}-${maxExp}`}
               className="h-full bg-gradient-to-r from-primary to-accent rounded-full relative"
               style={{ width: `${progress}%` }}
               initial={{ width: 0 }}
@@ -136,9 +149,9 @@ export default function ProfileCardV2({ image }: Props) {
             className="bg-secondary/30 rounded-xl p-3 flex items-center justify-between"
             whileHover={{ scale: 1.03 }}
           >
-            <div className="flex items-center">
-              <FaCoins className="text-warning mr-2 text-xl" />
-              <span className="text-primary-content font-medium">Coins</span>
+            <div className="flex flex-col items-center justify-center">
+              <FaCoins className="text-yellow-300  text-xl" />
+              <span className="text-primary-content text-xs">Coins</span>
             </div>
             <span className="text-primary-content font-bold">{user.coins}</span>
           </motion.div>
@@ -147,11 +160,13 @@ export default function ProfileCardV2({ image }: Props) {
             className="bg-secondary/30 rounded-xl p-3 flex items-center justify-between"
             whileHover={{ scale: 1.03 }}
           >
-            <div className="flex items-center">
-              <IoMdStar className="text-accent mr-2 text-xl" />
-              <span className="text-primary-content font-medium">Points</span>
+            <div className="flex-col items-center justify-center flex">
+              <IoMdStar className="text-green-400 text-xl" />
+              <span className="text-primary-content text-xs">Stars</span>
             </div>
-            <span className="text-primary-content font-bold">{user.point}</span>
+            <span className="text-primary-content font-bold text-sm">
+              {user.point}
+            </span>
           </motion.div>
         </div>
       </div>
