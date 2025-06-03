@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Prompt } from "next/font/google";
 import "./globals.css";
 import { LineProvider } from "../providers/line";
+import ToastProvider from "@/components/ui/toast-container";
 
 const prompt = Prompt({ subsets: ["thai"], weight: ["300", "400", "600"] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
         <body
           className={`${prompt.className} antialiased bg-gradient-to-br from-base-300 via-base-100 to-base-300`}
         >
+          <ToastProvider />
           {children}
         </body>
       </LineProvider>

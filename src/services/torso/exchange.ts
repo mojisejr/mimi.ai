@@ -32,8 +32,77 @@ export async function getExchangeSettingById(
   }
 }
 
-export const swapCoins = async () => {
-  /**
-   *
-   */
+export const swapCoins = async (
+  lineId: string,
+  exchangeSetting: IExchangeSetting,
+  inputCoins: number,
+  outputPoint: number
+) => {
+  try {
+    // 1. ตรวจสอบว่า user มี coins พอหรือไม่
+    const userQuery = await torso.execute({
+      sql: `SELECT * FROM user_point WHERE line_id = ?`,
+      args: [lineId],
+    });
+
+    if (userQuery.rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    const userCoins = userQuery.rows[0].coins as number;
+    if (userCoins < inputCoins) {
+      throw new Error("Insufficient coins");
+    }
+
+    // 2. เริ่ม transaction
+    const transaction = await torso.transaction("write");
+    try {
+      // 2.2 update user point table
+      await transaction.execute({
+        sql: `UPDATE user_point 
+              SET coins = coins - ?, 
+                  point = point + ? 
+              WHERE line_id = ?`,
+        args: [inputCoins, outputPoint, lineId],
+      });
+
+      // 2.3 update point transactions
+      await transaction.execute({
+        sql: `INSERT INTO point_transactions 
+              (line_id, event_type, delta_coins, delta_point) 
+              VALUES (?, ?, ?, ?)`,
+        args: [lineId, exchangeSetting.exchangeType, -inputCoins, outputPoint],
+      });
+
+      // 2.4 update coin exchange history
+      await transaction.execute({
+        sql: `INSERT INTO coin_exchanges 
+              (line_id, exchange_type, coin_amount, received_item, received_amount) 
+              VALUES (?, ?, ?, ?, ?)`,
+        args: [
+          lineId,
+          exchangeSetting.exchangeType,
+          inputCoins,
+          "point",
+          outputPoint,
+        ],
+      });
+
+      await transaction.commit();
+
+      return {
+        success: true,
+        exchange: {
+          inputCoins,
+          outputPoint,
+          exchangeType: exchangeSetting.exchangeType,
+        },
+      };
+    } finally {
+      transaction.close();
+    }
+  } catch (error) {
+    console.error("Error in swapCoins:", error);
+    throw error;
+  }
 };

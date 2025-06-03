@@ -1,22 +1,26 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { FaCoins, FaStar } from "react-icons/fa";
 import { IoMdSwap } from "react-icons/io";
 import { getExchangeSetting } from "@/actions/get-exchange-setting";
-import LoadingScreen from "@/components/ui/loading-screen";
 import { useLine } from "@/providers/line";
 import { getUser } from "@/actions/get-user-info";
 import { IUser } from "@/interfaces/i-user-info";
+import { swapCoinsAction } from "@/actions/swap-coins";
+import { toast } from "react-toastify";
+import { IExchangeSetting } from "@/interfaces/i-exchage";
 
 export default function PointSwapPage() {
   const { profile } = useLine();
+  const [isPending, startTransition] = useTransition();
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [coins, setCoins] = useState<string>("");
   const [points, setPoints] = useState<string>("");
   const [rate, setRate] = useState<number>(0);
   const [userCoins, setUserCoins] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [exchangeSetting, setExchangeSetting] = useState<IExchangeSetting>();
 
   useEffect(() => {
     handleGetExchageRate();
@@ -27,6 +31,7 @@ export default function PointSwapPage() {
     setLoading(true);
     getExchangeSetting()
       .then((exchange) => {
+        setExchangeSetting(exchange!);
         setRate(exchange?.coinPerUnit ?? 0);
         setLoading(false);
       })
@@ -74,10 +79,33 @@ export default function PointSwapPage() {
     return coinAmount > 0 && coinAmount <= userCoins && coinAmount % rate === 0;
   };
 
-  const handleSwap = () => {
-    if (rate <= 0 || !isValidSwapAmount(coins)) return;
-    // Mock swap function
-    console.log("แลก", coins, "เหรียญเป็น", points, "คะแนน");
+  const handleSwap = async () => {
+    if (rate <= 0 || !isValidSwapAmount(coins) || !profile || !exchangeSetting)
+      return;
+
+    startTransition(async () => {
+      try {
+        const result = await swapCoinsAction(
+          profile.userId,
+          exchangeSetting,
+          Number(coins),
+          Number(points)
+        );
+
+        if (result.success && result.data) {
+          toast.success("แลกเหรียญสำเร็จ");
+          // รีเซ็ตค่าและโหลดข้อมูลใหม่
+          setCoins("");
+          setPoints("");
+          handleGetUserInfo();
+        } else {
+          toast.error(result.error?.message || "เกิดข้อผิดพลาด");
+        }
+      } catch (error) {
+        console.error("Swap error:", error);
+        toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      }
+    });
   };
 
   return (
@@ -221,10 +249,10 @@ export default function PointSwapPage() {
                 whileTap={{ scale: 0.98 }}
                 className="btn btn-primary w-full mt-6 text-white"
                 onClick={handleSwap}
-                disabled={!isValidSwapAmount(coins)}
+                disabled={!isValidSwapAmount(coins) || isPending}
                 aria-label="ยืนยันการแลกเปลี่ยน"
               >
-                แลก
+                {isPending ? "กำลังแลก..." : "แลก"}
               </motion.button>
 
               {/* Rate Info */}
@@ -234,9 +262,7 @@ export default function PointSwapPage() {
             </div>
           </motion.div>
         </div>
-      ) : (
-        <LoadingScreen />
-      )}
+      ) : null}
     </div>
   );
 }
