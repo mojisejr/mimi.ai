@@ -2,6 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useImageCache } from "@/hooks/use-image-cache";
 
 interface Props {
   name: string;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export default function AnswerCard({ name, image, flipped, onClick }: Props) {
+  const { imageUrl, isLoading } = useImageCache(name, image);
+
   return (
     <motion.div
       initial={{ rotateY: 360 }}
@@ -25,15 +28,19 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
           flipped ? "opacity-100" : "opacity-0"
         }`}
       >
-        <Image
-          // src={`/images/cards/${image}`}
-          src={image}
-          alt={name}
-          fill
-          // width={512}
-          // height={512}
-          // className="w-full h-full rounded-xl"
-        />
+        {isLoading ? (
+          <div className="flex flex-col">
+            <div className="loading-infinity  loading loading-lg  bg-gradient-to-br from-accent to-primary"></div>
+            <span className="text-xs">กำลังโหลดไพ่</span>
+          </div>
+        ) : (
+          <Image
+            src={imageUrl}
+            alt={name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        )}
       </motion.div>
 
       {/* Back Side */}
@@ -53,10 +60,15 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
         }}
       >
         <div className="absolute inset-0 bg-white opacity-20 blur-xl rounded-md"></div>
-        <div className="relative h-[50px] w-[50px]">
-          {/* <div className="absolute top-0 left-0 loading loading-ring bg-gradient-to-br from-primary to-accent w-[50px]"></div> */}
-          <div className="absolute loading loading-infinity bg-gradient-to-br from-accent to-primary w-[50px]"></div>
+        <div className="relative h-[200px] w-[200px]">
+          <div className="absolute top-[25%] left-[20%] loading loading-ring bg-gradient-to-br from-primary to-accent w-[80px]"></div>
+          <div className="absolute top-[25%] left-[20%] loading loading-infinity bg-gradient-to-br from-accent to-primary w-[80px]"></div>
         </div>
+        {/* <div className="relative h-[50px] w-[50px]">
+          {isLoading && (
+            <div className="absolute loading loading-infinity bg-gradient-to-br from-accent to-primary w-[50px]"></div>
+          )}
+        </div> */}
         <div className="absolute bottom-2 text-xs">mimi.ai</div>
       </motion.div>
     </motion.div>
