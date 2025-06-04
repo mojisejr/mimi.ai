@@ -9,6 +9,8 @@ import axios from "axios";
 import { cleanInput } from "@/utils/clean-input";
 import { levelUp } from "@/services/torso/level";
 
+const cardBaseUrl = process.env.CARD_BASE_URL!;
+
 export async function askMimi(
   prevState: IAnswerResponseMessage,
   data: FormData
@@ -121,6 +123,12 @@ export async function askMimi(
     success: true,
     error: null,
     answerId: saveResult.answerId,
-    message: answers,
+    message: {
+      ...answers,
+      cards: answers.cards.map((card) => ({
+        name: card.name,
+        imageUrl: `${cardBaseUrl}${card.imageUrl}`,
+      })),
+    },
   };
 }

@@ -32,7 +32,7 @@ export default function StackedCards({ cards }: Props) {
           }}
         >
           <Image
-            src={`/images/cards/${c.imageUrl}`}
+            src={`${c.imageUrl}`}
             alt="card"
             fill
             className="object-contain"

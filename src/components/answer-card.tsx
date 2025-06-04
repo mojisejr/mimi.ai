@@ -26,7 +26,8 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
         }`}
       >
         <Image
-          src={`/images/cards/${image}`}
+          // src={`/images/cards/${image}`}
+          src={image}
           alt={name}
           fill
           // width={512}
