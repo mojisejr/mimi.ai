@@ -2,6 +2,8 @@ import { Reading } from "@/interfaces/i-readings";
 import { ISaveReading } from "@/interfaces/i-save-reading";
 import { torso } from "@/services/torso/torso-db";
 
+const cardBaseUrl = process.env.CARD_BASE_URL;
+
 /**
  * Saves a reading session including question and answer details
  * @param data - Reading session data
@@ -97,7 +99,12 @@ export const getReading = async (lineId: string) => {
         id: r.id,
         question: r.question,
         header: r.header,
-        cards: JSON.parse(r.cards as string),
+        cards: JSON.parse(r.cards as string).map(
+          (card: { name: string; imageUrl: string }) => ({
+            ...card,
+            imageUrl: `${cardBaseUrl}${card.imageUrl}`,
+          })
+        ),
         reading: r.reading,
         final: JSON.parse(r.final as string),
         suggest: JSON.parse(r.suggest as string),
