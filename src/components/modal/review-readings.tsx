@@ -3,6 +3,8 @@
 import React, { useState, useTransition } from "react";
 import AccuracyRatingSelector from "@/components/accuracy-rating-selector";
 import { createReviewAction } from "@/actions/create-review";
+import { toast } from "react-toastify";
+import { APP_CONFIG } from "@/app-config";
 
 type Props = {
   readingId: number;
@@ -26,7 +28,7 @@ export default function ReviewDialog({
 
   const handleSubmitReview = async (formData: FormData) => {
     if (!readingId) {
-      alert("ไม่พบ readingId");
+      toast.error("ไม่พบ readingId", APP_CONFIG.toast);
       return;
     }
 
@@ -39,14 +41,14 @@ export default function ReviewDialog({
         });
 
         if (result.success) {
-          alert("บันทึกการรีวิวสำเร็จ");
+          toast.success("บันทึกการรีวิวสำเร็จ", APP_CONFIG.toast);
           onReviewed();
           onClose();
         } else {
-          alert(result.message);
+          toast.error(result.message, APP_CONFIG.toast);
         }
       } catch (error) {
-        alert("เกิดข้อผิดพลาดในการบันทึกการรีวิว");
+        toast.error("เกิดข้อผิดพลาดในการบันทึกการรีวิว", APP_CONFIG.toast);
       }
     });
   };

@@ -6,6 +6,8 @@ import { useLine } from "@/providers/line";
 import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { APP_CONFIG } from "@/app-config";
 
 export const usePromptPay = () => {
   const router = useRouter();
@@ -19,7 +21,7 @@ export const usePromptPay = () => {
   ) => {
     setLoading(true);
     if (!isLoggedIn) {
-      alert("คุณต้องทำการ loggin ก่อน");
+      toast.error("คุณต้องทำการ loggin ก่อน", APP_CONFIG.toast);
       setLoading(false);
       return;
     }
@@ -42,12 +44,18 @@ export const usePromptPay = () => {
             return;
           } catch (error) {
             console.log(error);
-            alert("เกิดข้อผิดพลาดในการชำระเงิน: " + response.message);
+            toast.error(
+              "เกิดข้อผิดพลาดในการชำระเงิน: " + response.message,
+              APP_CONFIG.toast
+            );
             setLoading(false);
             return;
           }
         } else {
-          alert("เกิดข้อผิดพลาดในการชำระเงิน: " + response.message);
+          toast.error(
+            "เกิดข้อผิดพลาดในการชำระเงิน: " + response.message,
+            APP_CONFIG.toast
+          );
           setLoading(false);
           return;
         }

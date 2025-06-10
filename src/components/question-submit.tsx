@@ -8,6 +8,8 @@ import { useAudioInput } from "@/providers/audio-input";
 import { useRouter } from "next/navigation";
 import { useLine } from "@/providers/line";
 import PointCounter from "./point-counter";
+import { toast } from "react-toastify";
+import { APP_CONFIG } from "@/app-config";
 
 const initialState: IAnswerResponseMessage = {
   success: false,
@@ -60,7 +62,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
       push(`/questions/answer?aid=${state.answerId}`);
     }
     if (!state.success && state.message == null && state.error != null) {
-      alert(state.error);
+      toast.error(state.error, APP_CONFIG.toast);
       inputRef.current!.value = "";
       setAsking(false, "");
       return;
