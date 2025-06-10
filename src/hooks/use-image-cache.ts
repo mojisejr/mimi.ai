@@ -1,46 +1,62 @@
 import { useState, useEffect } from "react";
 import { imageCacheService } from "@/services/image-cache";
 
+// Hook สำหรับจัดการการ cache รูปภาพ
 export const useImageCache = (cardId: string, imageUrl: string) => {
+  // state สำหรับเก็บ URL ของรูปภาพที่ cache แล้ว
   const [cachedImageUrl, setCachedImageUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // state สำหรับเก็บสถานะการโหลด
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // ฟังก์ชันสำหรับโหลดรูปภาพ
     const loadImage = async () => {
       try {
-        // ตรวจสอบว่ามี cache หรือไม่
+        // ตรวจสอบว่ามีรูปใน cache หรือไม่
         const cached = await imageCacheService.getCachedImage(cardId);
 
         if (cached) {
+          // ถ้ามีใน cache ให้ใช้รูปจาก cache
           setCachedImageUrl(cached);
-          setIsLoading(false);
           return;
         }
 
-        // ถ้าไม่มี cache ให้โหลดและ cache ใหม่
-        await imageCacheService.cacheImage(cardId, imageUrl);
-        const newCached = await imageCacheService.getCachedImage(cardId);
-        setCachedImageUrl(newCached);
+        // ถ้าไม่มีใน cache ให้ใช้ URL โดยตรงก่อน
+        setCachedImageUrl(imageUrl);
+
+        // แล้วค่อย cache ในพื้นหลัง
+        try {
+          await imageCacheService.cacheImage(cardId, imageUrl);
+          const newCached = await imageCacheService.getCachedImage(cardId);
+          if (newCached) {
+            setCachedImageUrl(newCached);
+          }
+        } catch (error) {
+          console.error("Error caching image in background:", error);
+          // ถ้า cache ไม่สำเร็จก็ไม่เป็นไร เพราะเรามีรูปจาก URL อยู่แล้ว
+        }
       } catch (error) {
+        // กรณีเกิด error ให้ใช้รูปจาก URL โดยตรง
         console.error("Error loading cached image:", error);
-        setCachedImageUrl(imageUrl); // ถ้าเกิด error ให้ใช้ URL ตรงๆ
-      } finally {
-        setIsLoading(false);
+        setCachedImageUrl(imageUrl);
       }
     };
 
+    // เริ่มโหลดรูปภาพ
     loadImage();
 
-    // Cleanup function to revoke object URLs
+    // Cleanup function
     return () => {
+      // ลบ Object URL เมื่อ component unmount
       if (cachedImageUrl && cachedImageUrl.startsWith("blob:")) {
         URL.revokeObjectURL(cachedImageUrl);
       }
     };
-  }, [cardId, imageUrl]);
+  }, [cardId, imageUrl]); // ทำงานใหม่เมื่อ cardId หรือ imageUrl เปลี่ยน
 
+  // ส่งคืน URL ของรูปภาพและสถานะการโหลด
   return {
-    imageUrl: cachedImageUrl || imageUrl,
-    isLoading,
+    imageUrl: cachedImageUrl || imageUrl, // ใช้รูปจาก cache หรือ URL โดยตรง
+    isLoading, // สถานะการโหลด
   };
 };
