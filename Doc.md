@@ -600,3 +600,122 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
    - revoke URLs ทุกครั้ง
    - ตรวจสอบ memory usage
    - ทำ cleanup ให้ถูกต้อง
+
+# การจัดการ Image Caching ใน Next.js
+
+## ภาพรวม
+
+ระบบ Image Caching ถูกออกแบบมาเพื่อเพิ่มประสิทธิภาพในการโหลดรูปภาพในแอพพลิเคชัน โดยใช้ IndexedDB ในการเก็บ cache รูปภาพ ซึ่งช่วยให้:
+
+- โหลดรูปภาพเร็วขึ้น
+- ลดการใช้ bandwidth
+- ทำงานได้แม้ไม่มี internet (ถ้ามี cache)
+- สามารถเก็บรูปภาพได้จำนวนมาก
+
+## โครงสร้างไฟล์
+
+```
+src/
+├── services/
+│   └── image-cache.ts      # Service สำหรับจัดการ cache
+└── hooks/
+    └── use-image-cache.ts  # Hook สำหรับใช้งาน cache
+```
+
+## การใช้งาน
+
+### 1. การใช้งานใน Component
+
+```typescript
+// src/components/your-component.tsx
+import { useImageCache } from "@/hooks/use-image-cache";
+
+export default function YourComponent() {
+  const { imageUrl, isLoading } = useImageCache(
+    "unique-id", // ID ที่ใช้ระบุรูปภาพ
+    "https://example.com/image.jpg" // URL ของรูปภาพ
+  );
+
+  return (
+    <div>
+      {isLoading ? (
+        <div>กำลังโหลด...</div>
+      ) : (
+        <img src={imageUrl} alt="Your image" />
+      )}
+    </div>
+  );
+}
+```
+
+### 2. การจัดการ Cache
+
+```typescript
+// src/services/image-cache.ts
+import { imageCacheService } from "@/services/image-cache";
+
+// เก็บรูปภาพลง cache
+await imageCacheService.cacheImage(
+  "unique-id",
+  "https://example.com/image.jpg"
+);
+
+// ดึงรูปภาพจาก cache
+const cachedImage = await imageCacheService.getCachedImage("unique-id");
+```
+
+## ข้อดีของระบบ
+
+1. **ประสิทธิภาพ**:
+
+   - โหลดรูปภาพเร็วขึ้น
+   - ลดการใช้ bandwidth
+   - ทำงานได้แม้ไม่มี internet
+
+2. **การจัดการ Memory**:
+
+   - ใช้ IndexedDB แทน localStorage
+   - เก็บข้อมูลได้มากกว่า
+   - มีประสิทธิภาพดีกว่า
+
+3. **User Experience**:
+   - แสดง loading state
+   - โหลดรูปภาพเร็วขึ้น
+   - ทำงานได้แม้ไม่มี internet
+
+## ข้อควรระวัง
+
+1. **Browser Support**:
+
+   - ตรวจสอบการรองรับ IndexedDB
+   - มี fallback mechanism
+
+2. **Error Handling**:
+
+   - จัดการกรณี IndexedDB ไม่สามารถใช้งานได้
+   - จัดการกรณีโหลดรูปไม่สำเร็จ
+   - จัดการกรณี quota เต็ม
+
+3. **Memory Management**:
+   - revoke URLs เมื่อไม่ใช้
+   - ตรวจสอบ memory usage
+   - ทำ cleanup ให้ถูกต้อง
+
+## การทดสอบ
+
+1. **การโหลดครั้งแรก**:
+
+   - ตรวจสอบ loading state
+   - ตรวจสอบการ cache
+   - วัดความเร็วในการโหลด
+
+2. **การโหลดครั้งต่อไป**:
+
+   - ตรวจสอบความเร็วในการโหลด
+   - ตรวจสอบการใช้ cache
+   - ตรวจสอบ IndexedDB
+
+3. **การทดสอบ Offline**:
+   - ตรวจสอบการทำงานเมื่อไม่มี internet
+   - ตรวจสอบการแสดงรูปภาพ
+   - วัดความเร็วในการโหลด

@@ -8,6 +8,7 @@ import { getReferralCodeAction } from "@/actions/get-referral-code";
 import { createReferralCodeAction } from "@/actions/create-referral-code";
 import { useReferralCodeAction } from "@/actions/use-referral-code";
 import { useUser } from "@/contexts/user-context";
+import { toast } from "react-toastify";
 
 type Props = {
   image: string;
@@ -57,7 +58,7 @@ export default function ReferralBox() {
 
   const handleUseReferralCode = async () => {
     if (!friendCode.trim()) {
-      alert("กรุณากรอกรหัสแนะนำ");
+      toast.error("กรุณากรอกรหัสแนะนำ", { autoClose: 3000 });
       return;
     }
 
@@ -68,16 +69,20 @@ export default function ReferralBox() {
       if (result.success && result.data) {
         // อัพเดท user stats ใน context
         updateUserStats(result.data.coins, result.data.exp);
-        alert(
-          `ยินดีด้วย! คุณได้รับ ${result.data.coins} coins และ ${result.data.exp} exp`
+        toast.success(
+          `ยินดีด้วย! คุณได้รับ ${result.data.coins} coins และ ${result.data.exp} exp`,
+          { autoClose: 3000 }
         );
         setFriendCode(""); // เคลียร์ input หลังจากใช้รหัสสำเร็จ
       } else {
-        alert(result.error?.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+        toast.error(
+          result.error?.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+          { autoClose: 3000 }
+        );
       }
     } catch (error) {
       console.error("Error using referral code:", error);
-      alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", { autoClose: 3000 });
     } finally {
       setIsSubmitting(false);
     }

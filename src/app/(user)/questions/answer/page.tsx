@@ -7,6 +7,8 @@ import { deleteAnswerById } from "@/actions/delete-answer";
 import { IDeleteReadingType } from "@/interfaces/i-delete-answer";
 import { useSearchParams } from "next/navigation";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { APP_CONFIG } from "@/app-config";
 
 let initState: IDeleteReadingType = {
   success: false,
@@ -39,20 +41,20 @@ function AnswerPage() {
 
   useEffect(() => {
     if (deleteResult.success && deleteResult.message != null) {
-      alert(deleteResult.message);
+      toast.success(deleteResult.message, APP_CONFIG.toast);
       replace("/questions");
       return;
     }
 
     if (!deleteResult.success && deleteResult.error != null) {
-      alert(deleteResult.message);
+      toast.error(deleteResult.message, APP_CONFIG.toast);
       return;
     }
   }, [deleteResult]);
 
   const handleDeleteSubmit = (formData: FormData) => {
     if (!answerId) {
-      alert("ไม่พบ answerId ");
+      toast.error("ไม่พบ answerId ", APP_CONFIG.toast);
       return;
     }
 

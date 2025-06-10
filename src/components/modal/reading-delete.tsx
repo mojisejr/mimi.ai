@@ -3,6 +3,8 @@ import { deleteAnswerById } from "@/actions/delete-answer";
 import { IDeleteReadingType } from "@/interfaces/i-delete-answer";
 import React, { useEffect, useState, useTransition } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { APP_CONFIG } from "@/app-config";
 
 type Props = {
   lineId: string;
@@ -33,21 +35,21 @@ export default function ReadingDeleteDialog({
 
   useEffect(() => {
     if (deleteResult.success && deleteResult.message != null) {
-      alert(deleteResult.message);
+      toast.success(deleteResult.message, APP_CONFIG.toast);
       onDeleted();
       onClose();
       return;
     }
 
     if (!deleteResult.success && deleteResult.error != null) {
-      alert(deleteResult.message);
+      toast.error(deleteResult.message, APP_CONFIG.toast);
       return;
     }
   }, [deleteResult]);
 
   const handleDeleteReading = (formData: FormData) => {
     if (!readingId) {
-      alert("ไม่สามารถลบข้อมูลได้");
+      toast.error("ไม่สามารถลบข้อมูลได้", APP_CONFIG.toast);
       return;
     }
 
