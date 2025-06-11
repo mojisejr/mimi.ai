@@ -3,6 +3,7 @@ import { Prompt } from "next/font/google";
 import "./globals.css";
 import { LineProvider } from "../providers/line";
 import ToastProvider from "@/components/ui/toast-container";
+import { LanguageProvider } from "@/providers/language";
 
 const prompt = Prompt({ subsets: ["thai"], weight: ["300", "400", "600"] });
 
@@ -26,14 +27,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="th">
       <LineProvider>
-        <body
-          className={`${prompt.className} antialiased bg-gradient-to-br from-base-300 via-base-100 to-base-300`}
-        >
-          <ToastProvider />
-          {children}
-        </body>
+        <LanguageProvider>
+          <body
+            className={`${prompt.className} antialiased bg-gradient-to-br from-base-300 via-base-100 to-base-300`}
+          >
+            <ToastProvider />
+            {children}
+          </body>
+        </LanguageProvider>
       </LineProvider>
     </html>
   );

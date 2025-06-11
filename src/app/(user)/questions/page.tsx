@@ -5,6 +5,7 @@ import QuestionSubmit from "@/components/question-submit";
 import React, { useState, useEffect } from "react";
 import DailyLoginDialog from "@/components/daily-login-dialog";
 import { useLine } from "@/providers/line";
+import { useLanguage } from "@/providers/language";
 
 export default function QuestionPage() {
   const [asking, setAsking] = useState<{ status: boolean; question: string }>({
@@ -13,6 +14,7 @@ export default function QuestionPage() {
   });
   const [showDailyLogin, setShowDailyLogin] = useState(true);
   const { profile } = useLine();
+  const { t } = useLanguage();
 
   const handleAskingState = (status: boolean, question: string) => {
     setAsking({ status, question });
@@ -24,11 +26,14 @@ export default function QuestionPage() {
         {asking.status ? (
           <div className="px-10 flex justify-center w-full flex-col  items-center">
             <div className="leading-tight self-start">
-              <div>คำถามของคุณคือ</div>
+              <div>{t("askingQuestion.yourQuestionIs")}</div>
               <div>{asking.question} ?</div>
             </div>
             <TypingText
-              texts={["ทำใจให้สบาย..นะคะ", "กำลังทำนาย..."]}
+              texts={[
+                t("askingQuestion.typingText1"),
+                t("askingQuestion.typingText2"),
+              ]}
               duration={1.5}
               repeatDelay={1.3}
             />

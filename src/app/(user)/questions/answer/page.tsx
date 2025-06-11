@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { APP_CONFIG } from "@/app-config";
+import { useLanguage } from "@/providers/language";
 
 let initState: IDeleteReadingType = {
   success: false,
@@ -17,12 +18,13 @@ let initState: IDeleteReadingType = {
 };
 
 export default function AnswerPageWrapper() {
+  const { t } = useLanguage();
   return (
     <Suspense
       fallback={
         <div className="h-4/6 pt-[h-1/6] flex flex-col items-center gap-2 flex-1">
           <Logo />
-          <div>รอสักครู่ 😊</div>
+          <div>{t("answer.waiting")}😊</div>
         </div>
       }
     >
@@ -35,6 +37,7 @@ function AnswerPage() {
   const searchParam = useSearchParams();
   const answerId = searchParam.get("aid");
   const { back, replace } = useRouter();
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [deleteResult, setDeleteResult] =
     useState<IDeleteReadingType>(initState);
@@ -54,7 +57,7 @@ function AnswerPage() {
 
   const handleDeleteSubmit = (formData: FormData) => {
     if (!answerId) {
-      toast.error("ไม่พบ answerId ", APP_CONFIG.toast);
+      toast.error(t("answer.noAnswer"), APP_CONFIG.toast);
       return;
     }
 
@@ -71,7 +74,7 @@ function AnswerPage() {
         fallback={
           <div className="h-4/6 pt-[h-1/6] flex flex-col items-center gap-2 flex-1">
             <Logo />
-            <div>รอสักครู่ 😊</div>
+            <div>{t("answer.waiting")} 😊</div>
           </div>
         }
       >
@@ -79,7 +82,7 @@ function AnswerPage() {
       </Suspense>
       <section className="h-1/6 flex w-full justify-between items-center px-4">
         <button disabled={isPending} onClick={back} className="btn btn-primary">
-          👈 กลับไปถามต่อ
+          👈 {t("answer.back")}
         </button>
         <form action={handleDeleteSubmit}>
           <button
@@ -92,7 +95,11 @@ function AnswerPage() {
             ) : (
               <FaRegTrashAlt />
             )}
-            {isPending ? <span>กำลังลบ..</span> : <span>ลบ</span>}
+            {isPending ? (
+              <span>{t("answer.deleting")}</span>
+            ) : (
+              <span>{t("answer.deleteBtn")}</span>
+            )}
           </button>
         </form>
       </section>

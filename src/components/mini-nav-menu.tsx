@@ -1,5 +1,6 @@
 "use client";
 import { useLine } from "@/providers/line";
+import { useLanguage } from "@/providers/language";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -12,10 +13,12 @@ import {
   FaBook,
   FaSignOutAlt,
   FaExchangeAlt,
+  FaGlobe,
 } from "react-icons/fa";
 
 export default function MiniNavMenu() {
   const { logout, profile } = useLine();
+  const { language, setLanguage, t } = useLanguage();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,6 +30,10 @@ export default function MiniNavMenu() {
     setIsOpen(false);
   };
 
+  const toggleLanguage = () => {
+    setLanguage(language === "th" ? "en" : "th");
+  };
+
   return (
     <div className="dropdown dropdown-end">
       <div
@@ -35,7 +42,7 @@ export default function MiniNavMenu() {
         className="btn btn-square m-1"
         onClick={() => setIsOpen(!isOpen)}
       >
-        เมนู
+        {t("common.menu")}
       </div>
       <ul
         tabIndex={0}
@@ -49,7 +56,7 @@ export default function MiniNavMenu() {
             className={isActive("/profile")}
             onClick={handleClick}
           >
-            <FaUser className="mr-2" /> โปรไฟล์
+            <FaUser className="mr-2" /> {t("common.profile")}
           </Link>
         </li>
         <li>
@@ -58,7 +65,7 @@ export default function MiniNavMenu() {
             className={isActive("/questions")}
             onClick={handleClick}
           >
-            <FaQuestionCircle className="mr-2" /> ดูดวง
+            <FaQuestionCircle className="mr-2" /> {t("common.fortune")}
           </Link>
         </li>
         <li>
@@ -67,7 +74,7 @@ export default function MiniNavMenu() {
             className={isActive("/history")}
             onClick={handleClick}
           >
-            <FaHistory className="mr-2" /> ประวัติคำทำนาย
+            <FaHistory className="mr-2" /> {t("common.predictionHistory")}
           </Link>
         </li>
         <li>
@@ -76,7 +83,7 @@ export default function MiniNavMenu() {
             className={isActive("/payment")}
             onClick={handleClick}
           >
-            <FaCreditCard className="mr-2" /> เติมเครดิด
+            <FaCreditCard className="mr-2" /> {t("common.addCredit")}
           </Link>
         </li>
         <li>
@@ -85,7 +92,7 @@ export default function MiniNavMenu() {
             className={isActive("/payment/history")}
             onClick={handleClick}
           >
-            <FaMoneyBillWave className="mr-2" /> ประวัติการชำระเงิน
+            <FaMoneyBillWave className="mr-2" /> {t("common.paymentHistory")}
           </Link>
         </li>
         <li>
@@ -94,13 +101,18 @@ export default function MiniNavMenu() {
             className={isActive("/swap")}
             onClick={handleClick}
           >
-            <FaExchangeAlt className="mr-2" /> แลกเปลี่ยน coins
+            <FaExchangeAlt className="mr-2" /> {t("common.swapCoins")}
           </Link>
         </li>
         <li>
           <a onClick={handleClick}>
-            <FaBook className="mr-2" /> คู่มือการใช้งาน
+            <FaBook className="mr-2" /> {t("common.userGuide")}
           </a>
+        </li>
+        <li>
+          <button onClick={toggleLanguage}>
+            <FaGlobe className="mr-2" /> {language === "th" ? "English" : "ไทย"}
+          </button>
         </li>
         <li>
           <button
@@ -109,7 +121,7 @@ export default function MiniNavMenu() {
               logout();
             }}
           >
-            <FaSignOutAlt className="mr-2" /> ออกจากระบบ
+            <FaSignOutAlt className="mr-2" /> {t("common.logout")}
           </button>
         </li>
       </ul>

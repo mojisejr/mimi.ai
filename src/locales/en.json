@@ -1,0 +1,76 @@
+{
+    "common": {
+        "menu": "Menu",
+        "profile": "Profile",
+        "fortune": "Fortune",
+        "predictionHistory": "Prediction History",
+        "addCredit": "Add Credit",
+        "paymentHistory": "Payment History",
+        "swapCoins": "Swap Coins",
+        "userGuide": "User Guide",
+        "logout": "Logout"
+    },
+    "profile": {
+        "title": "Profile",
+        "userId": "User ID",
+        "name": "Name",
+        "email": "Email",
+        "coins": "Coins"
+    },
+    "askingQuestion": {
+        "yourQuestionIs": "Your question is",
+        "typingText1": "Take it easy..",
+        "typingText2": "Predicting.."
+    },
+    "pointCounter": {
+        "questionLeft1": "You have",
+        "questionLeft2": "questions remaining."
+    },
+    "referralBox": {
+        "title": "Invite Friends",
+        "yourCode": "Your Referral Code",
+        "copied": "Copied",
+        "noCode": "No Referral Code Yet",
+        "createBtn": "Create Code",
+        "createLoading": "Createing..",
+        "insertYourFriendCode": "Enter Friend's Referral Code",
+        "btn": "Use Code",
+        "loading": "Processing..."
+    },
+    "historyCard": {
+        "title1": "Advice",
+        "readBtn": "read",
+        "reviewBtn": "review",
+        "deleteBtn": "delete"
+    },
+    "microphoneButton": {
+        "IOS": "Unable to use the microphone on the LIFF app. Please open in a browser."
+    },
+    "heroQuestion": {
+        "typingTextHero": "Cards Are Ready!",
+        "subtitleLine1": "Tell me.",
+        "subtitleLine2": "What'd you like to know ?"
+    },
+    "swap": {
+        "title": "Exchange Questions (Stars) with Coins",
+        "currentBalance": "You have",
+        "swap": "Exchange",
+        "swapSuccessMsg": "Coins exchanged successfully",
+        "swapErrorMsg": "An error occurred. Please try again.",
+        "from": "From",
+        "to": "To",
+        "max": "Maximum amount",
+        "rate": "Exchange rate"
+    },
+    "answer": {
+        "waiting": "Please wait a moment",
+        "noAnswer": "Answer ID not found",
+        "back": "Back to reading",
+        "deleting": "Deleting...",
+        "deleteBtn": "Delete",
+        "cards": "🎴 Cards drawn",
+        "prediction": "🪄 Prediction",
+        "final": "💚 Summary",
+        "suggest": "🤟 Suggested questions"
+    }
+}

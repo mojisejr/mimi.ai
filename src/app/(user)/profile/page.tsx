@@ -14,7 +14,6 @@ export default function UserProfilePage() {
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-
   const handleGetUserInfo = () => {
     setLoading(true);
     if (!profile) return;
@@ -39,7 +38,7 @@ export default function UserProfilePage() {
 
   return (
     <FullScreenContainer>
-      <div className="px-6 overflow-y-scroll h-full pt-4 pb-6">
+      <div className="px-6 overflow-y-scroll h-full pt-4 pb-6 flex justify-center">
         <UserProvider initialUser={userInfo}>
           <div className="grid grid-col-1 gap-2">
             <ProfileCardV2 image={profile.pictureUrl!} />
