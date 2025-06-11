@@ -9,6 +9,7 @@ import { createReferralCodeAction } from "@/actions/create-referral-code";
 import { useReferralCodeAction } from "@/actions/use-referral-code";
 import { useUser } from "@/contexts/user-context";
 import { toast } from "react-toastify";
+import { useLanguage } from "@/providers/language";
 
 type Props = {
   image: string;
@@ -21,6 +22,7 @@ export default function ReferralBox() {
   const [isLoading, setIsLoading] = useState(false);
   const [friendCode, setFriendCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchReferralCode = async () => {
@@ -133,7 +135,9 @@ export default function ReferralBox() {
           whileHover={{ scale: 1.03 }}
         >
           <FaUserPlus className="text-2xl text-primary-content" />
-          <h2 className="text-xl font-bold text-primary-content">เชิญเพื่อน</h2>
+          <h2 className="text-xl font-bold text-primary-content">
+            {t("referralBox.title")}
+          </h2>
         </motion.div>
 
         {/* Referral Code Section */}
@@ -143,7 +147,7 @@ export default function ReferralBox() {
             whileHover={{ scale: 1.02 }}
           >
             <span className="text-sm text-primary-content/80">
-              รหัสแนะนำของคุณ
+              {t("referralBox.yourCode")}
             </span>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-primary-content tracking-wider">
@@ -165,7 +169,7 @@ export default function ReferralBox() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
               >
-                คัดลอกแล้ว!
+                {t("referralBox.copied")}
               </motion.span>
             )}
           </motion.div>
@@ -175,7 +179,7 @@ export default function ReferralBox() {
             whileHover={{ scale: 1.02 }}
           >
             <span className="text-sm text-primary-content/80 mb-2">
-              ยังไม่มีรหัสแนะนำ
+              {t("referralBox.noCode")}
             </span>
             <motion.button
               className="btn btn-primary"
@@ -184,7 +188,9 @@ export default function ReferralBox() {
               onClick={handleGenerateCode}
               disabled={isLoading}
             >
-              {isLoading ? "กำลังสร้างรหัส..." : "สร้างรหัสแนะนำ"}
+              {isLoading
+                ? t("referralBox.createLoading")
+                : t("referralBox.createBtn")}
             </motion.button>
           </motion.div>
         )}
@@ -195,12 +201,12 @@ export default function ReferralBox() {
           whileHover={{ scale: 1.02 }}
         >
           <span className="text-sm text-primary-content/80">
-            ใส่รหัสแนะนำของเพื่อน
+            {t("referralBox.insertYourFriendCode")}
           </span>
           <div className="flex items-center gap-2 w-full">
             <input
               type="text"
-              placeholder="ใส่รหัสแนะนำ"
+              placeholder="referral code"
               className="input input-bordered w-full max-w-xs bg-primary/20 text-primary-content placeholder:text-primary-content/50"
               maxLength={8}
               value={friendCode}
@@ -214,7 +220,7 @@ export default function ReferralBox() {
               onClick={handleUseReferralCode}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "กำลังดำเนินการ..." : "ใช้รหัส"}
+              {isSubmitting ? t("referralBox.loading") : t("referralBox.btn")}
             </motion.button>
           </div>
         </motion.div>

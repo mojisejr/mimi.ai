@@ -10,6 +10,7 @@ import { useLine } from "@/providers/line";
 import PointCounter from "./point-counter";
 import { toast } from "react-toastify";
 import { APP_CONFIG } from "@/app-config";
+import { useLanguage } from "@/providers/language";
 
 const initialState: IAnswerResponseMessage = {
   success: false,
@@ -30,6 +31,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { push } = useRouter();
   const { profile, getProfile } = useLine();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLocaleLowerCase();
@@ -113,7 +115,7 @@ export default function QuestionSubmit({ setAsking }: Props) {
         />
         {isIOS ? (
           <span className="text-xs text-slate-400">
-            ไม่สามารถใช้ไมค์บน LIFF APP กรุณาเปิดใน browser
+            {t("microphoneButton.IOS")}
           </span>
         ) : null}
       </div>

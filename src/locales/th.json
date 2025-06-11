@@ -1,0 +1,60 @@
+{
+    "common": {
+        "menu": "เมนู",
+        "profile": "โปรไฟล์",
+        "fortune": "ดูดวง",
+        "predictionHistory": "ประวัติคำทำนาย",
+        "addCredit": "เติมเครดิด",
+        "paymentHistory": "ประวัติการชำระเงิน",
+        "swapCoins": "แลกเปลี่ยน coins",
+        "userGuide": "คู่มือการใช้งาน",
+        "logout": "ออกจากระบบ"
+    },
+    "profile": {
+        "title": "โปรไฟล์",
+        "userId": "รหัสผู้ใช้",
+        "name": "ชื่อ",
+        "email": "อีเมล",
+        "coins": "เหรียญ"
+    },
+    "askingQuestion": {
+        "yourQuestionIs": "คำถามของคุณคือ",
+        "typingText1": "ทำใจให้สบาย..นะคะ",
+        "typingText2": "กำลังทำนาย.."
+    },
+    "pointCounter": {
+        "questionLeft1": "คุณเหลืออีก",
+        "questionLeft2": "คำถาม."
+    },
+    "heroQuestion": {
+        "typingTextHero": "ไพ่พร้อมแล้วค่ะ",
+        "subtitleLine1": "บอกฉันสิ",
+        "subtitleLine2": "คุณอยากรู้อะไร ?"
+    },
+    "microphoneButton": {
+        "IOS": "ไม่สามารถใช้ไมค์บน LIFF APP กรุณาเปิดใน browser"
+    },
+    "referralBox": {
+        "title": "เชิญเพื่อน",
+        "yourCode": "รหัสแนะนำของคุณ",
+        "copied": "คัดลอกแล้ว!",
+        "noCode": "ยังไม่มีรหัสแนะนำ",
+        "insertYourFriendCode": "ใส่รหัสแนะนำของเพื่อน",
+        "createBtn": "สร้างรหัสแนะนำ",
+        "createLoading": "กำลังสร้างรหัสแนะนำ",
+        "btn": "ใช้โค้ด",
+        "loading": "กำลังดำเนินการ"
+    },
+    "historyCard": {
+        "title1": "คำแนะนำ",
+        "readBtn": "อ่าน",
+        "reviewBtn": "รีวิว",
+        "deleteBtn": "ลบ"
+    },
+    "swap": {
+        "title": "แลกเปลี่ยนเหรียญ",
+        "currentBalance": "ยอดเหรียญปัจจุบัน",
+        "swapAmount": "จำนวนที่ต้องการแลก",
+        "swap": "แลกเปลี่ยน"
+    }
+}

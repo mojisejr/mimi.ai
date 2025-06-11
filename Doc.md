@@ -719,3 +719,223 @@ const cachedImage = await imageCacheService.getCachedImage("unique-id");
    - ตรวจสอบการทำงานเมื่อไม่มี internet
    - ตรวจสอบการแสดงรูปภาพ
    - วัดความเร็วในการโหลด
+
+# การ Implement ระบบหลายภาษาใน Next.js Application
+
+## 1. โครงสร้างพื้นฐาน
+
+### 1.1 โครงสร้างไฟล์
+
+```
+src/
+├── locales/
+│   ├── th.json    # ไฟล์ภาษาไทย
+│   └── en.json    # ไฟล์ภาษาอังกฤษ
+├── providers/
+│   └── language.tsx  # Language Provider
+└── app/
+    └── layout.tsx    # Root Layout ที่ใช้ Provider
+```
+
+### 1.2 การจัดการไฟล์ภาษา
+
+ไฟล์ภาษาแต่ละไฟล์จะถูกจัดเก็บในรูปแบบ JSON โดยแบ่งเป็นหมวดหมู่ตามการใช้งาน:
+
+```json
+// th.json
+{
+  "common": {
+    "menu": "เมนู",
+    "profile": "โปรไฟล์"
+  },
+  "profile": {
+    "title": "โปรไฟล์",
+    "userId": "รหัสผู้ใช้"
+  }
+}
+```
+
+## 2. การสร้าง Language Provider
+
+### 2.1 Type Definitions
+
+```typescript
+// กำหนดประเภทของภาษาที่รองรับ
+type Language = "th" | "en";
+
+// กำหนดประเภทของ Context
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
+```
+
+### 2.2 การสร้าง Context
+
+```typescript
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
+```
+
+### 2.3 การสร้าง Provider Component
+
+```typescript
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  // State สำหรับเก็บภาษาปัจจุบัน
+  const [language, setLanguage] = useState<Language>("th");
+
+  // โหลดภาษาจาก localStorage เมื่อ component mount
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language") as Language;
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+  }, []);
+
+  // ฟังก์ชันสำหรับเปลี่ยนภาษา
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang);
+    localStorage.setItem("language", lang);
+  };
+
+  // ฟังก์ชันสำหรับแปลข้อความ
+  const t = (key: string) => {
+    const keys = key.split(".");
+    let value: any = translations[language];
+
+    for (const k of keys) {
+      value = value?.[k];
+    }
+
+    return value || key;
+  };
+
+  return (
+    <LanguageContext.Provider
+      value={{ language, setLanguage: handleSetLanguage, t }}
+    >
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+```
+
+### 2.4 Custom Hook สำหรับใช้งาน
+
+```typescript
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+  return context;
+}
+```
+
+## 3. การใช้งานใน Application
+
+### 3.1 การเพิ่ม Provider ใน Root Layout
+
+```typescript
+// src/app/layout.tsx
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="th">
+      <body>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### 3.2 การใช้งานใน Component
+
+```typescript
+import { useLanguage } from "@/providers/language";
+
+export default function MyComponent() {
+  const { language, setLanguage, t } = useLanguage();
+
+  return (
+    <div>
+      <h1>{t("profile.title")}</h1>
+      <button onClick={() => setLanguage("en")}>Switch to English</button>
+    </div>
+  );
+}
+```
+
+## 4. Best Practices และ Pattern การออกแบบ
+
+### 4.1 การจัดการไฟล์ภาษา
+
+- แบ่งหมวดหมู่ตามการใช้งาน (common, profile, questions, etc.)
+- ใช้ nested keys เพื่อจัดการข้อความที่เกี่ยวข้องกัน
+- ตั้งชื่อ key ให้มีความหมายและเข้าใจง่าย
+
+### 4.2 การออกแบบ Provider
+
+- ใช้ Context API สำหรับจัดการ state แบบ global
+- เก็บค่าภาษาใน localStorage เพื่อให้คงอยู่หลัง refresh
+- สร้าง custom hook เพื่อให้ใช้งานง่ายและ type-safe
+
+### 4.3 การจัดการ Type Safety
+
+- กำหนด type ให้ชัดเจนสำหรับภาษาที่รองรับ
+- ใช้ TypeScript เพื่อป้องกันการใช้งานผิดพลาด
+- ตรวจสอบ type ของ context ใน custom hook
+
+### 4.4 การจัดการ Performance
+
+- ใช้ React.memo สำหรับ component ที่ไม่จำเป็นต้อง re-render เมื่อภาษาเปลี่ยน
+- จัดการ state อย่างมีประสิทธิภาพ
+- หลีกเลี่ยงการสร้าง object ใหม่ที่ไม่จำเป็น
+
+## 5. การขยายระบบ
+
+### 5.1 การเพิ่มภาษาใหม่
+
+1. สร้างไฟล์ภาษาใหม่ใน `locales/`
+2. เพิ่ม type ใหม่ใน `Language` type
+3. เพิ่มไฟล์ภาษาใน `translations` object
+
+### 5.2 การเพิ่มข้อความใหม่
+
+1. เพิ่ม key ใหม่ในไฟล์ภาษาทั้งหมด
+2. ใช้ nested keys เพื่อจัดการข้อความที่เกี่ยวข้องกัน
+3. ตรวจสอบความถูกต้องของ key ในทุกไฟล์ภาษา
+
+## 6. ข้อควรระวัง
+
+### 6.1 การจัดการ Missing Translations
+
+- ใช้ fallback value เมื่อไม่พบข้อความแปล
+- ตรวจสอบความครบถ้วนของข้อความในทุกไฟล์ภาษา
+- แสดง warning ใน development mode เมื่อพบ missing translation
+
+### 6.2 การจัดการ Dynamic Content
+
+- หลีกเลี่ยงการแปลข้อความที่มีการเปลี่ยนแปลงบ่อย
+- ใช้ parameterized translations สำหรับข้อความที่มีตัวแปร
+- จัดการ format ของวันที่และตัวเลขตามภาษา
+
+## 7. การทดสอบ
+
+### 7.1 Unit Tests
+
+- ทดสอบการเปลี่ยนภาษา
+- ทดสอบการแปลข้อความ
+- ทดสอบการจัดการ missing translations
+
+### 7.2 Integration Tests
+
+- ทดสอบการทำงานร่วมกับ components อื่นๆ
+- ทดสอบการ persist ภาษาที่เลือก
+- ทดสอบการทำงานใน SSR environment
