@@ -10,9 +10,11 @@ import { IUser } from "@/interfaces/i-user-info";
 import { swapCoinsAction } from "@/actions/swap-coins";
 import { toast } from "react-toastify";
 import { IExchangeSetting } from "@/interfaces/i-exchage";
+import { useLanguage } from "@/providers/language";
 
 export default function PointSwapPage() {
   const { profile } = useLine();
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
   const [coins, setCoins] = useState<string>("");
@@ -93,7 +95,7 @@ export default function PointSwapPage() {
         );
 
         if (result.success && result.data) {
-          toast.success("แลกเหรียญสำเร็จ");
+          toast.success(t("swap.swapSuccessMsg"));
           // รีเซ็ตค่าและโหลดข้อมูลใหม่
           setCoins("");
           setPoints("");
@@ -103,7 +105,7 @@ export default function PointSwapPage() {
         }
       } catch (error) {
         console.error("Swap error:", error);
-        toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+        toast.error(t("swap.swapErrorMsg"));
       }
     });
   };
@@ -149,7 +151,7 @@ export default function PointSwapPage() {
 
             <div className="card-body relative">
               <h2 className="card-title text-xl font-bold mb-4 text-white">
-                แลกข้อคำถาม (Stars) ด้วย Coins
+                {t("swap.title")}
               </h2>
 
               {/* Available Balance */}
@@ -158,7 +160,9 @@ export default function PointSwapPage() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <p className="text-sm opacity-70 text-white">คุณมี</p>
+                <p className="text-sm opacity-70 text-white">
+                  {t("swap.currentBalance")}
+                </p>
                 <div className="flex items-center gap-2">
                   <FaCoins className="text-yellow-400" />
                   <span className="font-bold text-white">
@@ -176,7 +180,9 @@ export default function PointSwapPage() {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm opacity-70 text-white">จาก</span>
+                    <span className="text-sm opacity-70 text-white">
+                      {t("swap.from")}
+                    </span>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -184,7 +190,7 @@ export default function PointSwapPage() {
                       onClick={() => handleCoinsChange(userCoins.toString())}
                       aria-label="ใช้จำนวนเหรียญสูงสุด"
                     >
-                      จำนวนสูงสุด
+                      {t("swap.max")}
                     </motion.button>
                   </div>
                   <div className="flex items-center gap-2">
@@ -223,7 +229,9 @@ export default function PointSwapPage() {
                   whileHover={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <span className="text-sm opacity-70 text-white">เป็น</span>
+                  <span className="text-sm opacity-70 text-white">
+                    {t("swap.to")}
+                  </span>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
@@ -257,7 +265,9 @@ export default function PointSwapPage() {
 
               {/* Rate Info */}
               <div className="text-center mt-4 text-sm opacity-70 text-white">
-                <p>อัตราแลกเปลี่ยน: 1 Star = {rate} Coins</p>
+                <p>
+                  {t("swap.rate")}: 1 Star = {rate} Coins
+                </p>
               </div>
             </div>
           </motion.div>

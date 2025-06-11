@@ -52,9 +52,14 @@
         "subtitleLine2": "What'd you like to know ?"
     },
     "swap": {
-        "title": "Swap Coins",
-        "currentBalance": "Current Balance",
-        "swapAmount": "Swap Amount",
-        "swap": "Swap"
+        "title": "Exchange Questions (Stars) with Coins",
+        "currentBalance": "You have",
+        "swap": "Exchange",
+        "swapSuccessMsg": "Coins exchanged successfully",
+        "swapErrorMsg": "An error occurred. Please try again.",
+        "from": "From",
+        "to": "To",
+        "max": "Maximum amount",
+        "rate": "Exchange rate"
     }
 }
