@@ -1,5 +1,4 @@
 import { PiNotepadBold } from "react-icons/pi";
-import React from "react";
 
 type Props = {
   message?: string;

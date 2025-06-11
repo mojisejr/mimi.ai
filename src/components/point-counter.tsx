@@ -1,7 +1,6 @@
 "use client";
 import { useLanguage } from "@/providers/language";
 import { useLine } from "@/providers/line";
-import React from "react";
 
 export default function PointCounter() {
   const { profile, profileLoading } = useLine();

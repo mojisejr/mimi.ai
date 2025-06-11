@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { IAnswer } from "@/interfaces/i-answer";
 import { useState, useRef, useEffect } from "react";
 import AnswerCard from "../answer-card";
+import { useLanguage } from "@/providers/language";
 
 const textVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -15,6 +16,7 @@ const textVariants = {
 
 export default function AnswerSection() {
   const [parsedAnswer, setParsedAnswer] = useState<IAnswer | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const answerData = localStorage.getItem("answerData");
@@ -75,7 +77,7 @@ export default function AnswerSection() {
             {parsedAnswer.header}
           </h1>
           <div className="w-full">
-            <div className="text-xl font-bold">🎴 ไพ่ที่หยิบได้</div>
+            <div className="text-xl font-bold">{t("answer.cards")}</div>
             <div className="my-4">
               {parsedAnswer.cards.length <= 3 ? (
                 <div className="grid grid-cols-3 gap-2 max-w-md">
@@ -133,13 +135,13 @@ export default function AnswerSection() {
               }}
             >
               <motion.h1 className="text-xl font-bold" variants={textVariants}>
-                🪄 คำทำนาย
+                {t("answer.prediction")}
               </motion.h1>
               <motion.p variants={textVariants}>
                 {parsedAnswer?.reading}
               </motion.p>
               <motion.h1 className="text-xl font-bold" variants={textVariants}>
-                💚 สรุป
+                {t("answer.final")}
               </motion.h1>
               <motion.ul variants={textVariants}>
                 {parsedAnswer?.final.map((f, index) => (
@@ -150,7 +152,7 @@ export default function AnswerSection() {
               </motion.ul>
 
               <motion.h1 className="text-xl font-bold" variants={textVariants}>
-                🤟 แนะนำคำถาม
+                {t("answer.suggest")}
               </motion.h1>
               <motion.ul variants={textVariants}>
                 {parsedAnswer?.suggest.map((s, index) => (

@@ -1,10 +1,7 @@
 "use client";
-import { usePromptPay } from "@/hooks/promptpay";
 import { PackageInfo } from "@/interfaces/i-package";
-import { Profile } from "@/providers/line";
-import { loadScript } from "@/utils/script-loader";
+import { useLanguage } from "@/providers/language";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 
 interface RefillCardProps {

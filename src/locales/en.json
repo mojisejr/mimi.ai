@@ -61,5 +61,16 @@
         "to": "To",
         "max": "Maximum amount",
         "rate": "Exchange rate"
+    },
+    "answer": {
+        "waiting": "Please wait a moment",
+        "noAnswer": "Answer ID not found",
+        "back": "Back to reading",
+        "deleting": "Deleting...",
+        "deleteBtn": "Delete",
+        "cards": "🎴 Cards drawn",
+        "prediction": "🪄 Prediction",
+        "final": "💚 Summary",
+        "suggest": "🤟 Suggested questions"
     }
 }

@@ -1,4 +1,3 @@
-import React from "react";
 import StackedCards from "./stacked-cards";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { MdOutlineReviews } from "react-icons/md";
