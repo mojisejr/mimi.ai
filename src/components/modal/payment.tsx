@@ -49,12 +49,19 @@ export default function PaymentModal({ pack, onClose, isOpen }: Props) {
     });
   };
 
+  const handleCloseCreditCardForm = () => {
+    setShowCreditCardForm(false);
+  };
+
   return (
     <>
       {isOpen && isLoggedIn && (
         <dialog id="payment_dialog" className="modal modal-open">
           {showCreditCardForm ? (
-            <CreditCardForm pack={pack as PackageInfo} onClose={onClose} />
+            <CreditCardForm
+              pack={pack as PackageInfo}
+              onClose={handleCloseCreditCardForm}
+            />
           ) : (
             <div className="modal-box">
               <h2 className="text-2xl font-bold my-2">
