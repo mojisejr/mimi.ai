@@ -72,6 +72,7 @@
         "prediction": "🪄 Prediction",
         "final": "💚 Summary",
         "suggest": "🤟 Suggested questions",
-        "cardLoading": "loading.."
+        "cardLoading": "loading..",
+        "suggest_note": "Click on the question you want to ask next"
     }
 }

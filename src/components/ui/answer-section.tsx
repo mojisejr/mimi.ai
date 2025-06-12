@@ -156,6 +156,13 @@ export default function AnswerSection() {
               <motion.h1 className="text-xl font-bold" variants={textVariants}>
                 {t("answer.suggest")}
               </motion.h1>
+              <motion.p
+                className="text-sm text-gray-500 mb-2"
+                variants={textVariants}
+              >
+                {t("answer.suggest_note") ||
+                  "คลิกที่คำถามเพื่อดูคำทำนายเพิ่มเติม"}
+              </motion.p>
               <motion.ul variants={textVariants}>
                 {parsedAnswer?.suggest.map((s, index) => (
                   <li
@@ -164,9 +171,14 @@ export default function AnswerSection() {
                       localStorage.setItem("selectedQuestion", s);
                       router.push("/questions");
                     }}
-                    className="cursor-pointer hover:text-accent transition-colors duration-200"
+                    className="cursor-pointer hover:text-accent transition-colors duration-200 flex items-center gap-2 group"
                   >
-                    {index + 1}. {s}
+                    <span className="text-accent group-hover:scale-110 transition-transform">
+                      →
+                    </span>
+                    <span className="group-hover:underline">
+                      {index + 1}. {s}
+                    </span>
                   </li>
                 ))}
               </motion.ul>
