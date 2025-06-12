@@ -75,6 +75,15 @@ export default function QuestionSubmit({ setAsking }: Props) {
     getProfile();
   }, []);
 
+  useEffect(() => {
+    const selectedQuestion = localStorage.getItem("selectedQuestion");
+    if (selectedQuestion && inputRef.current) {
+      inputRef.current.value = selectedQuestion;
+      setCount(selectedQuestion.length);
+      localStorage.removeItem("selectedQuestion");
+    }
+  }, []);
+
   const handleSubmit = (formData: FormData) => {
     formAction(formData);
   };

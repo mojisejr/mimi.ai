@@ -71,6 +71,7 @@
         "cards": "🎴 Cards drawn",
         "prediction": "🪄 Prediction",
         "final": "💚 Summary",
-        "suggest": "🤟 Suggested questions"
+        "suggest": "🤟 Suggested questions",
+        "cardLoading": "loading.."
     }
 }

@@ -104,11 +104,11 @@ export default function MiniNavMenu() {
             <FaExchangeAlt className="mr-2" /> {t("common.swapCoins")}
           </Link>
         </li>
-        <li>
+        {/* <li>
           <a onClick={handleClick}>
             <FaBook className="mr-2" /> {t("common.userGuide")}
           </a>
-        </li>
+        </li> */}
         <li>
           <button onClick={toggleLanguage}>
             <FaGlobe className="mr-2" /> {language === "th" ? "English" : "ไทย"}

@@ -4,6 +4,7 @@ import { IAnswer } from "@/interfaces/i-answer";
 import { useState, useRef, useEffect } from "react";
 import AnswerCard from "../answer-card";
 import { useLanguage } from "@/providers/language";
+import { useRouter } from "next/navigation";
 
 const textVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -17,6 +18,7 @@ const textVariants = {
 export default function AnswerSection() {
   const [parsedAnswer, setParsedAnswer] = useState<IAnswer | null>(null);
   const { t } = useLanguage();
+  const router = useRouter();
 
   useEffect(() => {
     const answerData = localStorage.getItem("answerData");
@@ -156,7 +158,14 @@ export default function AnswerSection() {
               </motion.h1>
               <motion.ul variants={textVariants}>
                 {parsedAnswer?.suggest.map((s, index) => (
-                  <li key={index}>
+                  <li
+                    key={index}
+                    onClick={() => {
+                      localStorage.setItem("selectedQuestion", s);
+                      router.push("/questions");
+                    }}
+                    className="cursor-pointer hover:text-accent transition-colors duration-200"
+                  >
                     {index + 1}. {s}
                   </li>
                 ))}
