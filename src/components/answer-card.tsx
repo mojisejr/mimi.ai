@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useImageCache } from "@/hooks/use-image-cache";
+import { useLanguage } from "@/providers/language";
 
 interface Props {
   name: string;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function AnswerCard({ name, image, flipped, onClick }: Props) {
+  const { t } = useLanguage();
   const { imageUrl, isLoading } = useImageCache(name, image);
 
   return (
@@ -30,7 +32,7 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
         {isLoading ? (
           <div className="flex flex-col">
             <div className="loading-infinity  loading loading-lg  bg-gradient-to-br from-accent to-primary"></div>
-            <span className="text-xs">กำลังโหลดไพ่</span>
+            <span className="text-xs">{t("answer.cardLoading")}</span>
           </div>
         ) : (
           <Image
