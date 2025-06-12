@@ -116,7 +116,7 @@ export const addPointToUser = async (userId: string, pointToAdd: number) => {
         args: [pointToAdd, userId],
       },
       {
-        sql: `INSERT INTO user_point_history (line_id, action, amount) VALUES(?, ?, ?)`,
+        sql: `INSERT INTO point_transactions (line_id, event_type, delta_point) VALUES(?, ?, ?)`,
         args: [userId, "refilled", pointToAdd],
       },
     ]);
