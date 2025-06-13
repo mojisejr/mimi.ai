@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import AnswerCard from "../answer-card";
 import { useLanguage } from "@/providers/language";
 import { useRouter } from "next/navigation";
+import LoadingScreen from "./loading-screen";
 
 const textVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -72,8 +73,9 @@ export default function AnswerSection() {
   return (
     <section className="h-4/6 pt-[h-1/6] p-4 overflow-y-auto">
       {parsedAnswer == null ? (
-        <div>Loading ... </div>
+        <LoadingScreen />
       ) : (
+        // <div>Loading ... </div>
         <div className="grid grid-cols-1 gap-4 max-w-2xl">
           <h1 className="border-l-2 border-accent p-2">
             {parsedAnswer.header}

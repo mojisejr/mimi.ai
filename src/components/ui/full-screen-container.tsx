@@ -5,5 +5,5 @@ type Props = {
 };
 
 export default function FullScreenContainer({ children }: Props) {
-  return <div className="h-5/6 w-full">{children}</div>;
+  return <div className="h-5/6 w-full overflow-y-scroll">{children}</div>;
 }

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 export default function HeroCard() {
@@ -46,7 +47,11 @@ export default function HeroCard() {
         <div className="absolute top-0 left-0 loading loading-ring bg-gradient-to-br from-primary to-accent w-[200px]"></div>
         <div className="absolute top-[25%] left-[25%] loading loading-infinity bg-gradient-to-br from-accent to-primary w-[100px]"></div>
       </div>
-      <div className="absolute bottom-2">mimi.ai</div>
+      <div className="absolute bottom-2">
+        <figure className="max-w-20">
+          <Image src="/logo-1.png" width={300} height={200} alt="logo" />
+        </figure>
+      </div>
     </motion.div>
   );
 }
