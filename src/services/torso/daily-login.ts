@@ -1,7 +1,6 @@
 import {
   IDailyLoggin,
   IDailyLogginCampaign,
-  IUserDailyLoggin,
 } from "@/interfaces/i-daily-loggin";
 import { torso } from "./torso-db";
 import { v4 as uuidv4 } from "uuid";
@@ -12,16 +11,15 @@ import { v4 as uuidv4 } from "uuid";
  * @returns Object ประกอบด้วย canClaim และข้อมูล daily login
  */
 export const checkDailyLoginStatus = async (lineId: string) => {
-  let campaignId = "dlg-1";
+  // let campaignId = "dlg-1";
   try {
     // 1. ดึงข้อมูล campaign ที่ active อยู่
     const activeCampaign = await torso.execute({
       sql: `SELECT * FROM daily_login_campaigns 
-            WHERE id = ?
+            WHERE is_active = true
             AND start_date <= unixepoch() 
             AND end_date >= unixepoch()
             LIMIT 1`,
-      args: [campaignId],
     });
 
     if (activeCampaign.rows.length === 0) {
@@ -191,6 +189,7 @@ export const getDailyRewardCampaigns = async () => {
   try {
     const campaigns = await torso.execute({
       sql: `SELECT * FROM daily_login_campaigns
+            AND is_active = true
             ORDER BY created_at DESC`,
     });
 
@@ -285,23 +284,81 @@ export const checkDailyClaimStatus = async (lineId: string) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
+    // 1. ตรวจสอบว่ามี campaign ที่ active อยู่หรือไม่
+    const activeCampaign = await torso.execute({
+      sql: `SELECT * FROM daily_login_campaigns 
+            WHERE is_active = true
+            AND start_date <= unixepoch() 
+            AND end_date >= unixepoch()
+            LIMIT 1`,
+    });
+
+    if (activeCampaign.rows.length === 0) {
+      return {
+        hasClaimedToday: false,
+        message: "ไม่มีแคมเปญที่กำลังดำเนินการอยู่",
+      };
+    }
+
+    const campaignId = activeCampaign.rows[0].id;
+
+    // 2. ตรวจสอบจำนวนวันที่ต้องทำทั้งหมด
+    const totalDays = await torso.execute({
+      sql: `SELECT COUNT(*) as count 
+            FROM daily_login_rewards 
+            WHERE campaign_id = ?`,
+      args: [campaignId],
+    });
+
+    // 3. ตรวจสอบจำนวนวันที่ผู้ใช้ได้ claim แล้ว
+    const claimedDays = await torso.execute({
+      sql: `SELECT COUNT(*) as count 
+            FROM user_daily_logins 
+            WHERE line_id = ? 
+            AND campaign_id = ?`,
+      args: [lineId, campaignId],
+    });
+
+    const totalDaysCount = Number(totalDays.rows[0]?.count || 0);
+    const claimedDaysCount = Number(claimedDays.rows[0]?.count || 0);
+
+    // 4. ตรวจสอบว่าผู้ใช้ได้ claim วันนี้แล้วหรือไม่
     const checkClaimedToday = await torso.execute({
       sql: `SELECT COUNT(*) as count 
             FROM user_daily_logins 
             WHERE line_id = ? 
+            AND campaign_id = ?
             AND received_at >= ? 
             AND received_at < ?`,
-      args: [lineId, today.getTime() / 1000, tomorrow.getTime() / 1000],
+      args: [
+        lineId,
+        campaignId,
+        today.getTime() / 1000,
+        tomorrow.getTime() / 1000,
+      ],
     });
 
-    const claimedCount = Number(checkClaimedToday.rows[0]?.count || 0);
+    const claimedTodayCount = Number(checkClaimedToday.rows[0]?.count || 0);
+
+    // 5. สร้างข้อความตามสถานะ
+    let message = "";
+    if (claimedTodayCount > 0 && claimedDaysCount < totalDaysCount) {
+      message = "คุณได้ claim reward วันนี้แล้ว กรุณามาใหม่พรุ่งนี้";
+    } else if (claimedDaysCount >= totalDaysCount) {
+      message =
+        "ขอบคุณที่ร่วมกิจกรรมกับเรา คุณได้ทำครบทุกวันแล้ว รอติดตามแคมเปญหน้านะคะ";
+    } else {
+      message = "คุณสามารถ claim reward ได้";
+    }
 
     return {
-      hasClaimedToday: claimedCount > 0,
-      message:
-        claimedCount > 0
-          ? "คุณได้ claim reward วันนี้แล้ว กรุณามาใหม่พรุ่งนี้"
-          : "คุณสามารถ claim reward ได้",
+      hasClaimedToday: claimedTodayCount > 0,
+      message,
+      progress: {
+        totalDays: totalDaysCount,
+        claimedDays: claimedDaysCount,
+        isCompleted: claimedDaysCount >= totalDaysCount,
+      },
     };
   } catch (error) {
     console.error("Error checking daily claim status:", error);

@@ -38,13 +38,15 @@ export default function UserProfilePage() {
 
   return (
     <FullScreenContainer>
-      <div className="px-6 overflow-y-scroll h-full pt-4 pb-6 flex justify-center">
-        <UserProvider initialUser={userInfo}>
-          <div className="grid grid-col-1 gap-2">
-            <ProfileCardV2 image={profile.pictureUrl!} />
-            <ReferralBox />
-          </div>
-        </UserProvider>
+      <div className="flex justify-center">
+        <div className="px-6 overflow-y-scroll h-full pt-4 pb-6">
+          <UserProvider initialUser={userInfo}>
+            <div className="grid grid-col-1 gap-2">
+              <ProfileCardV2 image={profile.pictureUrl!} />
+              <ReferralBox />
+            </div>
+          </UserProvider>
+        </div>
       </div>
     </FullScreenContainer>
   );
