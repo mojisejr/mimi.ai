@@ -70,7 +70,12 @@ export default function AnswerCard({ name, image, flipped, onClick }: Props) {
             <div className="absolute loading loading-infinity bg-gradient-to-br from-accent to-primary w-[50px]"></div>
           )}
         </div> */}
-        <div className="absolute bottom-2 text-xs">mimi.ai</div>
+        {/* <div className="absolute bottom-2 text-xs">mimi.ai</div> */}
+        <div className="absolute bottom-2">
+          <figure className="max-w-14">
+            <Image src="/logo-1.png" width={300} height={200} alt="logo" />
+          </figure>
+        </div>
       </motion.div>
     </motion.div>
   );

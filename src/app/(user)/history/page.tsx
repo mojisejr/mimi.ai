@@ -79,12 +79,7 @@ export default function QuestionHistory() {
   if (readings.length <= 0) {
     return (
       <>
-        {isLoadReading ? (
-          <NoReadings message="กำลังโหลดข้อมูล.." />
-        ) : (
-          <NoReadings />
-        )}
-        ;
+        {isLoadReading ? <NoReadings message="Loading.." /> : <NoReadings />};
       </>
     );
   }
