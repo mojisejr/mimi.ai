@@ -25,6 +25,7 @@ type Props = {
 
 export default function QuestionSubmit({ setAsking }: Props) {
   const [count, setCount] = useState<number>(0);
+  const [question, setQuestion] = useState<string>("");
   const [state, formAction, pending] = useActionState(askMimi, initialState);
   const [isIOS, setIsIOS] = useState<boolean>(false);
   const { transcribe } = useAudioInput();
@@ -44,28 +45,28 @@ export default function QuestionSubmit({ setAsking }: Props) {
 
   useEffect(() => {
     if (transcribe && transcribe?.length > 0) {
-      inputRef.current!.value = transcribe;
+      setQuestion(transcribe);
       setCount(transcribe.length);
     }
   }, [transcribe]);
 
   useEffect(() => {
     if (pending) {
-      setAsking(true, inputRef.current!.value);
+      setAsking(true, question);
     } else {
       setAsking(false, "");
     }
-  }, [pending]);
+  }, [pending, question]);
 
   useEffect(() => {
     if (state.success && state.message != null) {
-      inputRef.current!.value = "";
+      setQuestion("");
       localStorage.setItem("answerData", JSON.stringify(state.message));
       push(`/questions/answer?aid=${state.answerId}`);
     }
     if (!state.success && state.message == null && state.error != null) {
       toast.error(state.error, APP_CONFIG.toast);
-      inputRef.current!.value = "";
+      setQuestion("");
       setAsking(false, "");
       return;
     }
@@ -77,8 +78,8 @@ export default function QuestionSubmit({ setAsking }: Props) {
 
   useEffect(() => {
     const selectedQuestion = localStorage.getItem("selectedQuestion");
-    if (selectedQuestion && inputRef.current) {
-      inputRef.current.value = selectedQuestion;
+    if (selectedQuestion) {
+      setQuestion(selectedQuestion);
       setCount(selectedQuestion.length);
       localStorage.removeItem("selectedQuestion");
     }
@@ -105,7 +106,9 @@ export default function QuestionSubmit({ setAsking }: Props) {
             disabled={pending}
             ref={inputRef}
             name="question"
+            value={question}
             onChange={(e) => {
+              setQuestion(e.target.value);
               setCount(e.target.value.length);
             }}
             className="shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-xl w-full textarea  focus:outline-none resize-none leading-tight touch-manipulation text-[16px]"
