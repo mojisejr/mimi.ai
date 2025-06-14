@@ -14,6 +14,7 @@ import {
   FaSignOutAlt,
   FaExchangeAlt,
   FaGlobe,
+  FaDiscord,
 } from "react-icons/fa";
 
 export default function MiniNavMenu() {
@@ -113,6 +114,15 @@ export default function MiniNavMenu() {
           <button onClick={toggleLanguage}>
             <FaGlobe className="mr-2" /> {language === "th" ? "English" : "ไทย"}
           </button>
+        </li>
+        <li>
+          <Link
+            href="https://discord.gg/EASJ5WTrhY"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaDiscord className="mr-2" /> Discord
+          </Link>
         </li>
         <li>
           <button
