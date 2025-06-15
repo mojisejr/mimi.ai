@@ -2,7 +2,7 @@
 import HeroQuestion from "@/components/hero-question";
 import TypingText from "@/components/typing-text/text";
 import QuestionSubmit from "@/components/question-submit";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DailyLoginDialog from "@/components/daily-login-dialog";
 import { useLine } from "@/providers/line";
 import { useLanguage } from "@/providers/language";
@@ -12,7 +12,6 @@ export default function QuestionPage() {
     status: false,
     question: "",
   });
-  const [showDailyLogin, setShowDailyLogin] = useState(true);
   const { profile } = useLine();
   const { t } = useLanguage();
 
@@ -49,13 +48,7 @@ export default function QuestionPage() {
       </section>
 
       {/* Daily Login Dialog */}
-      {profile?.userId && (
-        <DailyLoginDialog
-          isOpen={showDailyLogin}
-          onClose={() => setShowDailyLogin(false)}
-          lineId={profile.userId}
-        />
-      )}
+      {profile?.userId && <DailyLoginDialog lineId={profile.userId} />}
     </div>
   );
 }
