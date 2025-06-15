@@ -8,9 +8,9 @@ import { LanguageProvider } from "@/providers/language";
 const prompt = Prompt({ subsets: ["thai"], weight: ["300", "400", "600"] });
 
 export const metadata: Metadata = {
-  title: "แม่หมอมี่มี่.ai",
+  title: "MiMiVibe.ai",
   description:
-    "แม่หมอมี่มี่.ai ผู้ช่วยดูดวงอัจฉริยะ ที่จะช่วยคุณค้นหาคำตอบและคำแนะนำในชีวิต ด้วยพลังแห่งปัญญาประดิษฐ์",
+    "ไพ่พร้อมแล้ว... แล้วคุณล่ะ อยากรู้เรื่องอะไร? MiMiVibe.ai คือผู้ช่วยดูดวงอัจฉริยะ ที่จะเผยคำทำนายจาก AI แม่นยำ รู้ใจ พร้อมตอบทุกความสงสัยในชีวิต",
 };
 
 export const viewport: Viewport = {
