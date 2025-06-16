@@ -1,4 +1,3 @@
-import StackedCards from "./stacked-cards";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { MdOutlineReviews } from "react-icons/md";
 import { PiReadCvLogoBold } from "react-icons/pi";
@@ -20,7 +19,7 @@ export default function HistoryCard({
   deleteDialog,
   reviewDialog,
 }: HistoryCardProps) {
-  const { id, question, cards, final, createdAt, isReviewed } = reading;
+  const { id, question, cards, final, createdAt } = reading;
   const review = reading && reading.review ? reading.review : null;
 
   const handleRedirectToReadningPage = () => {
@@ -30,12 +29,12 @@ export default function HistoryCard({
   };
 
   return (
-    <div className="flex min-w-[330px] max-w-md shadow-xl rounded-xl border-primary flex-col overflow-hidden">
+    <div className="flex min-w-[330px] shadow-xl rounded-xl border-primary flex-col overflow-hidden">
       <div className="flex gap-2">
-        <div className="flex items-center p-2">
+        {/* <div className="flex items-center p-2">
           <StackedCards cards={cards} />
-        </div>
-        <div className="p-4 gap-[4px] flex-col flex">
+        </div> */}
+        <div className="p-6 gap-[4px] flex-col flex">
           <h2 className="font-semibold text-primary">{question}?</h2>
           <div className="flex gap-1 items-center">
             <div className="badge badge-sm text-[9px] badge-accent">
@@ -44,12 +43,12 @@ export default function HistoryCard({
 
             <div
               className={`badge badge-sm text-[9px] ${
-                isReviewed > 0 ? "badge-warning" : null
+                review?.accurateLevel ? "badge-warning" : null
               }`}
             >
-              {isReviewed > 0 ? "reviewed" : "no-review"}
+              {review?.accurateLevel ? "reviewed" : "no-review"}
             </div>
-            <div className="flex items-center text-xs gap-[2px]">
+            <div className="flex items-center text-medium gap-[2px]">
               <RatingStars starNumber={review?.accurateLevel ?? 0} />
               <span>{getPercentageFromScore(review?.accurateLevel ?? 0)}%</span>
             </div>
@@ -80,7 +79,7 @@ export default function HistoryCard({
           <button
             onClick={() => reviewDialog(lineId, question, id)}
             className="btn btn-xs btn-primary flex gap-1 items-center"
-            disabled={isReviewed > 0}
+            disabled={review?.accurateLevel != null}
           >
             <MdOutlineReviews />
             <span>รีวิว</span>
